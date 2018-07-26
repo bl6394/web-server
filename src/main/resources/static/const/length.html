@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minLength ) {
+                    document.getElementById("minLengthInputField").value = constraints.minLength;
+                }
+                if (constraints.maxLength) {
+                    document.getElementById("maxLengthInputField").value = constraints.maxLength;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minLengthInputField").value) {
+                constraints.minLength = document.getElementById("minLengthInputField").value;
+            } else {
+                delete constraints.minLength;
+            }
+            if (document.getElementById("maxLengthInputField").value) {
+                constraints.maxLength = document.getElementById("maxLengthInputField").value;
+            } else {
+                delete constraints.maxLength;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on Length</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the length or leave blank if non are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>Length</TD>
+            <TD><INPUT ID="minLengthInputField" TYPE=TEXT NAME="minLength"></TD>
+            <TD><INPUT ID="maxLengthInputField" TYPE=TEXT NAME="maxLength">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minLogFreqHal ) {
+                  document.getElementById("minLog_Freq_HALInputField").value = constraints.minLogFreqHal;
+              }
+              if (constraints.maxLogFreqHal) {
+                  document.getElementById("maxLog_Freq_HALInputField").value = constraints.maxLogFreqHal;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minLog_Freq_HALInputField").value) {
+              constraints.minLogFreqHal = document.getElementById("minLog_Freq_HALInputField").value;
+          } else {
+              delete constraints.minLogFreqHal;
+          }
+          if (document.getElementById("maxLog_Freq_HALInputField").value) {
+              constraints.maxLogFreqHal = document.getElementById("maxLog_Freq_HALInputField").value;
+          } else {
+              delete constraints.maxLogFreqHal;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on Log_Freq_HAL</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Log_Freq_HAL or leave blank if non are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>Log_Freq_HAL</TD>
+      <TD><INPUT ID="minLog_Freq_HALInputField" TYPE=TEXT NAME="minLog_Freq_HAL"></TD>
+      <TD><INPUT ID="maxLog_Freq_HALInputField" TYPE=TEXT NAME="maxLog_Freq_HAL">
+    </TR>
+  </table>
+  <BR>
+  <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
