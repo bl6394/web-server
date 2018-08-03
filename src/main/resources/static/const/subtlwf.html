@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minSubtlwf ) {
+                    document.getElementById("minSubtlwfInputField").value = constraints.minSubtlwf;
+                }
+                if (constraints.maxSubtlwf) {
+                    document.getElementById("maxSubtlwfInputField").value = constraints.maxSubtlwf;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minSubtlwfInputField").value) {
+                constraints.minSubtlwf = document.getElementById("minSubtlwfInputField").value;
+            } else {
+                delete constraints.minSubtlwf;
+            }
+            if (document.getElementById("maxSubtlwfInputField").value) {
+                constraints.maxSubtlwf = document.getElementById("maxSubtlwfInputField").value;
+            } else {
+                delete constraints.maxSubtlwf;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on SUBTLWF</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the SUBTLWF or leave blank if non are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>Subtlwf</TD>
+            <TD><INPUT ID="minSubtlwfInputField" TYPE=TEXT NAME="minSubtlwf"></TD>
+            <TD><INPUT ID="maxSubtlwfInputField" TYPE=TEXT NAME="maxSubtlwf">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

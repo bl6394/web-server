@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minLgSubtlcd ) {
+                    document.getElementById("minLgSubtlcdInputField").value = constraints.minLgSubtlcd;
+                }
+                if (constraints.maxLgSubtlcd) {
+                    document.getElementById("maxLgSubtlcdInputField").value = constraints.maxLgSubtlcd;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minLgSubtlcdInputField").value) {
+                constraints.minLgSubtlcd = document.getElementById("minLgSubtlcdInputField").value;
+            } else {
+                delete constraints.minLgSubtlcd;
+            }
+            if (document.getElementById("maxLgSubtlcdInputField").value) {
+                constraints.maxLgSubtlcd = document.getElementById("maxLgSubtlcdInputField").value;
+            } else {
+                delete constraints.maxLgSubtlcd;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on LgSubtlcd</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the LgSUBTLCD or leave blank if non are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>LgSUBTLCD</TD>
+            <TD><INPUT ID="minLgSubtlcdInputField" TYPE=TEXT NAME="minLgSubtlcd"></TD>
+            <TD><INPUT ID="maxLgSubtlcdInputField" TYPE=TEXT NAME="maxLgSubtlcd">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
