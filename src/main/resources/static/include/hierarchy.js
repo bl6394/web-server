@@ -8,14 +8,6 @@ if (document.images) {
     }
 }
 
-function expandIt() {
-    return
-}
-
-function expandAll() {
-    return
-}
-
 isExpanded = false;
 
 function reDo() {
@@ -45,30 +37,14 @@ function arrange() {
     }
 }
 
-function initIt() {
-
-    tempColl = document.getElementsByName("DIV");
-    for (i = 0; i < tempColl.length; i++) {
-        if (tempColl(i).className == "child") {
-            tempColl(i).style.display = "none";
-            tempColl(i).isExpanded = false;
-        }
-    }
-
-}
-
 function expandIt(el) {
-    expandIE(el)
-
-}
-
-function expandIE(el) {
     whichEl = eval(el + "Child");
     whichIm = event.srcElement;
-    if (whichEl.style.display == "none") {
+    if (whichEl.style.display == "none" || whichEl.isInited === undefined) {
         whichEl.style.display = "block";
         whichEl.isExpanded = true;
         whichIm.src = "/images/minus.gif";
+        whichEl.isInited = true;
     }
     else {
         whichEl.style.display = "none";
@@ -134,4 +110,3 @@ function linkIt(whichEl, whichHref) {
 
 }
 
-window.onload = initIt;
