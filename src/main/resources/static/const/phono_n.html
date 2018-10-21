@@ -10,11 +10,11 @@
               if (constraints == undefined){
                   constraints = {};
               }
-              if (constraints.minFreqKF ) {
-                  document.getElementById("minFreq_KFInputField").value = constraints.minFreqKF;
+              if (constraints.minPhonoN ) {
+                  document.getElementById("minPhono_NInputField").value = constraints.minPhonoN;
               }
-              if (constraints.maxFreqKF) {
-                  document.getElementById("maxFreq_KFInputField").value = constraints.maxFreqKF;
+              if (constraints.maxPhonoN) {
+                  document.getElementById("maxPhono_NInputField").value = constraints.maxPhonoN;
               }
           } else {
               document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
@@ -25,26 +25,26 @@
           if (constraints == undefined){
               constraints = {};
           }
-          if (document.getElementById("minFreq_KFInputField").value) {
-              constraints.minFreqKF = document.getElementById("minFreq_KFInputField").value;
+          if (document.getElementById("minPhono_NInputField").value) {
+              constraints.minPhonoN = document.getElementById("minPhono_NInputField").value;
           } else {
-              delete constraints.minFreqKF;
+              delete constraints.minPhonoN;
           }
-          if (document.getElementById("maxFreq_KFInputField").value) {
-              constraints.maxFreqKF = document.getElementById("maxFreq_KFInputField").value;
+          if (document.getElementById("maxPhono_NInputField").value) {
+              constraints.maxPhonoN = document.getElementById("maxPhono_NInputField").value;
           } else {
-              delete constraints.maxFreqKF;
+              delete constraints.maxPhonoN;
           }
           localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
           self.close();
       }
   </script>
-  <title>Constraints on Freq_KF</title>
+  <title>Constraints on Phono_N</title>
 </head>
 
 <body onload="init()">
 <div id="errorMessage"></div>
-<h2>Please enter any desired contraints upon the Freq_KF or leave blank if none are desired:</h2>
+<h2>Please enter any desired contraints upon the Phono_N or leave blank if none are desired:</h2>
 <div style="text-align: center;">
   <table border="0">
     <tr>
@@ -53,9 +53,9 @@
       <th align="left">Maximum Value</th>
     </tr>
     <TR ALIGN=LEFT>
-      <TD>Freq_KF</TD>
-      <TD><INPUT ID="minFreq_KFInputField" TYPE=TEXT NAME="minFreq_KF"></TD>
-      <TD><INPUT ID="maxFreq_KFInputField" TYPE=TEXT NAME="maxFreq_KF">
+      <TD>Phono_N</TD>
+      <TD><INPUT ID="minPhono_NInputField" TYPE=TEXT NAME="minPhono_N"></TD>
+      <TD><INPUT ID="maxPhono_NInputField" TYPE=TEXT NAME="maxPhono_N">
     </TR>
   </table>
   <BR>
