@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minFreqGMean ) {
+                  document.getElementById("minFreq_G_MeanInputField").value = constraints.minFreqGMean;
+              }
+              if (constraints.maxFreqGMean) {
+                  document.getElementById("maxFreq_G_MeanInputField").value = constraints.maxFreqGMean;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minFreq_G_MeanInputField").value) {
+              constraints.minFreqGMean = document.getElementById("minFreq_G_MeanInputField").value;
+          } else {
+              delete constraints.minFreqGMean;
+          }
+          if (document.getElementById("maxFreq_G_MeanInputField").value) {
+              constraints.maxFreqGMean = document.getElementById("maxFreq_G_MeanInputField").value;
+          } else {
+              delete constraints.maxFreqGMean;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on Freq_G_Mean</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Freq_G_Mean or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>Freq_G_Mean</TD>
+      <TD><INPUT ID="minFreq_G_MeanInputField" TYPE=TEXT NAME="minFreq_G_Mean"></TD>
+      <TD><INPUT ID="maxFreq_G_MeanInputField" TYPE=TEXT NAME="maxFreq_G_Mean">
+    </TR>
+  </table>
+  <BR>
+  <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

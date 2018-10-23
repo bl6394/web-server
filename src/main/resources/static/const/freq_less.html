@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minFreqLess ) {
+                  document.getElementById("minFreq_LessInputField").value = constraints.minFreqLess;
+              }
+              if (constraints.maxFreqLess) {
+                  document.getElementById("maxFreq_LessInputField").value = constraints.maxFreqLess;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minFreq_LessInputField").value) {
+              constraints.minFreqLess = document.getElementById("minFreq_LessInputField").value;
+          } else {
+              delete constraints.minFreqLess;
+          }
+          if (document.getElementById("maxFreq_LessInputField").value) {
+              constraints.maxFreqLess = document.getElementById("maxFreq_LessInputField").value;
+          } else {
+              delete constraints.maxFreqLess;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on Freq_Less</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Freq_Less or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>Freq_Less</TD>
+      <TD><INPUT ID="minFreq_LessInputField" TYPE=TEXT NAME="minFreq_Less"></TD>
+      <TD><INPUT ID="maxFreq_LessInputField" TYPE=TEXT NAME="maxFreq_Less">
+    </TR>
+  </table>
+  <BR>
+  <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
