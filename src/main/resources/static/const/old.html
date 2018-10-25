@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minOLD ) {
+                    document.getElementById("minOLDInputField").value = constraints.minOLD;
+                }
+                if (constraints.maxOLD) {
+                    document.getElementById("maxOLDInputField").value = constraints.maxOLD;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minOLDInputField").value) {
+                constraints.minOLD = document.getElementById("minOLDInputField").value;
+            } else {
+                delete constraints.minOLD;
+            }
+            if (document.getElementById("maxOLDInputField").value) {
+                constraints.maxOLD = document.getElementById("maxOLDInputField").value;
+            } else {
+                delete constraints.maxOLD;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on OLD</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the OLD or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>OLD</TD>
+            <TD><INPUT ID="minOLDInputField" TYPE=TEXT NAME="minOLD"></TD>
+            <TD><INPUT ID="maxOLDInputField" TYPE=TEXT NAME="maxOLD">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

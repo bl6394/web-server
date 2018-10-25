@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minPLDF ) {
+                    document.getElementById("minPLDFInputField").value = constraints.minPLDF;
+                }
+                if (constraints.maxPLDF) {
+                    document.getElementById("maxPLDFInputField").value = constraints.maxPLDF;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minPLDFInputField").value) {
+                constraints.minPLDF = document.getElementById("minPLDFInputField").value;
+            } else {
+                delete constraints.minPLDF;
+            }
+            if (document.getElementById("maxPLDFInputField").value) {
+                constraints.maxPLDF = document.getElementById("maxPLDFInputField").value;
+            } else {
+                delete constraints.maxPLDF;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on PLDF</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the PLDF or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>PLDF</TD>
+            <TD><INPUT ID="minPLDFInputField" TYPE=TEXT NAME="minPLDF"></TD>
+            <TD><INPUT ID="maxPLDFInputField" TYPE=TEXT NAME="maxPLDF">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

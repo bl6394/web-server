@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minBGSum ) {
+                  document.getElementById("minBG_SumInputField").value = constraints.minBGSum;
+              }
+              if (constraints.maxBGSum) {
+                  document.getElementById("maxBG_SumInputField").value = constraints.maxBGSum;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minBG_SumInputField").value) {
+              constraints.minBGSum = document.getElementById("minBG_SumInputField").value;
+          } else {
+              delete constraints.minBGSum;
+          }
+          if (document.getElementById("maxBG_SumInputField").value) {
+              constraints.maxBGSum = document.getElementById("maxBG_SumInputField").value;
+          } else {
+              delete constraints.maxBGSum;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on BG_Sum</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the BG_Sum or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>BG_Sum</TD>
+      <TD><INPUT ID="minBG_SumInputField" TYPE=TEXT NAME="minBG_Sum"></TD>
+      <TD><INPUT ID="maxBG_SumInputField" TYPE=TEXT NAME="maxBG_Sum">
+    </TR>
+  </table>
+  <BR>
+  <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

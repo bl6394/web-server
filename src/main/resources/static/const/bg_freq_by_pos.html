@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minBGFreqByPos ) {
+                  document.getElementById("minBG_Freq_By_PosInputField").value = constraints.minBGFreqByPos;
+              }
+              if (constraints.maxBGFreqByPos) {
+                  document.getElementById("maxBG_Freq_By_PosInputField").value = constraints.maxBGFreqByPos;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minBG_Freq_By_PosInputField").value) {
+              constraints.minBGFreqByPos = document.getElementById("minBG_Freq_By_PosInputField").value;
+          } else {
+              delete constraints.minBGFreqByPos;
+          }
+          if (document.getElementById("maxBG_Freq_By_PosInputField").value) {
+              constraints.maxBGFreqByPos = document.getElementById("maxBG_Freq_By_PosInputField").value;
+          } else {
+              delete constraints.maxBGFreqByPos;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on BG_Freq_By_Pos</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the BG_Freq_By_Pos or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>BG_Freq_By_Pos</TD>
+      <TD><INPUT ID="minBG_Freq_By_PosInputField" TYPE=TEXT NAME="minBG_Freq_By_Pos"></TD>
+      <TD><INPUT ID="maxBG_Freq_By_PosInputField" TYPE=TEXT NAME="maxBG_Freq_By_Pos">
+    </TR>
+  </table>
+  <BR>
+  <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
