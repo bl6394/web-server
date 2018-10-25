@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minNPhon ) {
+                    document.getElementById("minNPhonInputField").value = constraints.minNPhon;
+                }
+                if (constraints.maxNPhon) {
+                    document.getElementById("maxNPhonInputField").value = constraints.maxNPhon;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minNPhonInputField").value) {
+                constraints.minNPhon = document.getElementById("minNPhonInputField").value;
+            } else {
+                delete constraints.minNPhon;
+            }
+            if (document.getElementById("maxNPhonInputField").value) {
+                constraints.maxNPhon = document.getElementById("maxNPhonInputField").value;
+            } else {
+                delete constraints.maxNPhon;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on NPhon</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the NPhon or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>NPhon</TD>
+            <TD><INPUT ID="minNPhonInputField" TYPE=TEXT NAME="minNPhon"></TD>
+            <TD><INPUT ID="maxNPhonInputField" TYPE=TEXT NAME="maxNPhon">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

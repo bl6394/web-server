@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minNMorph ) {
+                    document.getElementById("minNMorphInputField").value = constraints.minNMorph;
+                }
+                if (constraints.maxNMorph) {
+                    document.getElementById("maxNMorphInputField").value = constraints.maxNMorph;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minNMorphInputField").value) {
+                constraints.minNMorph = document.getElementById("minNMorphInputField").value;
+            } else {
+                delete constraints.minNMorph;
+            }
+            if (document.getElementById("maxNMorphInputField").value) {
+                constraints.maxNMorph = document.getElementById("maxNMorphInputField").value;
+            } else {
+                delete constraints.maxNMorph;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on NMorph</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the NMorph or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>NMorph</TD>
+            <TD><INPUT ID="minNMorphInputField" TYPE=TEXT NAME="minNMorph"></TD>
+            <TD><INPUT ID="maxNMorphInputField" TYPE=TEXT NAME="maxNMorph">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
