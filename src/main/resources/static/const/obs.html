@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minObs ) {
+                    document.getElementById("minObsInputField").value = constraints.minObs;
+                }
+                if (constraints.maxObs) {
+                    document.getElementById("maxObsInputField").value = constraints.maxObs;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minObsInputField").value) {
+                constraints.minObs = document.getElementById("minObsInputField").value;
+            } else {
+                delete constraints.minObs;
+            }
+            if (document.getElementById("maxObsInputField").value) {
+                constraints.maxObs = document.getElementById("maxObsInputField").value;
+            } else {
+                delete constraints.maxObs;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on Obs</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Obs or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>Obs</TD>
+            <TD><INPUT ID="minObsInputField" TYPE=TEXT NAME="minObs"></TD>
+            <TD><INPUT ID="maxObsInputField" TYPE=TEXT NAME="maxObs">
+        </TR>
+    </table>
+    <BR>
+    <button onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
