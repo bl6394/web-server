@@ -5,8 +5,19 @@
           content="text/html; charset=iso-8859-1">
     <title>ELP Home - Generate List - Query Start</title>
     <link rel="stylesheet" href="../styles.css">
-    <script type="text/javascript" src="/include/library.js"></script>
-    <script type="text/javascript" src="/include/hierarchy.js"></script>
+    <script src="/include/library.js"></script>
+    <script src="/include/hierarchy.js"></script>
+    <script src="/include/jquery-3.3.1.min.js"></script>
+    <script>
+        function buttonDo() {
+            var constraintsJson=localStorage.getItem('CONSTRAINTS');
+            if (!constraintsJson)
+                constraintsJson='{}';
+            $('#form').append('<input type="hidden" name="constraints" value=' + constraintsJson + ' />');
+            $('#form').submit();
+            return true;
+        }
+    </script>
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000">
@@ -29,14 +40,14 @@
                 characteristics that you wish to see as well as enter any limits
                 upon their values. Only those words and characteristics
                 matching all of your entered contraints will be displayed.</p>
-            <form action="Query13do.asp" method="POST" name="Query13">
+            <form id="form" action="/query13/query13do" method="POST" name="Query13">
                 <hr>
-                <h2>Please select the fields and any contraints to be used in the query:</h2>
+                <h2>Please select the fields and any constraints to be used in the query:</h2>
 
                 <div w3-include-html="/query13/hier1.html"></div>
                 <HR>
                 <div w3-include-html="/query13/option1.html"></div>
-                <input type=SUBMIT value="Execute Query">
+                <button onclick="buttonDo();">Execute Query</button>
                 <input type="reset" value="Clear"> </p>
             </form>
             <hr>
