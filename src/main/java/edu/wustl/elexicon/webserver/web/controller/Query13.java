@@ -12,10 +12,11 @@ import java.util.List;
 public class Query13 {
 
     @PostMapping (value = "/query13/query13do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String greeting1(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        model.addAttribute("contraints", formData.get("constraints"));
-        List<String> field = formData.get("field");
-        model.addAttribute("field", field);
+    public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        model.addAttribute("dist", formData.get("dist"));
+        model.addAttribute("scope", formData.get("scope"));
+        model.addAttribute("constraints", formData.get("constraints"));
+        model.addAttribute("field", formData.get("field"));
         model.addAttribute("name", "Bjorn");
         return "/query13/query13do";
     }
