@@ -10,11 +10,11 @@
                 if (constraints == undefined){
                     constraints = {};
                 }
-                if (constraints.minSubtlcd ) {
-                    document.getElementById("minSubtlcdInputField").value = constraints.minSubtlcd;
+                if (constraints.minLgSubtlcd ) {
+                    document.getElementById("minLgSubtlcdInputField").value = constraints.minLgSubtlcd;
                 }
-                if (constraints.maxSubtlcd) {
-                    document.getElementById("maxSubtlcdInputField").value = constraints.maxSubtlcd;
+                if (constraints.maxLgSubtlcd) {
+                    document.getElementById("maxLgSubtlcdInputField").value = constraints.maxLgSubtlcd;
                 }
             } else {
                 document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
@@ -25,26 +25,26 @@
             if (constraints == undefined){
                 constraints = {};
             }
-            if (document.getElementById("minSubtlcdInputField").value) {
-                constraints.minSubtlcd = document.getElementById("minSubtlcdInputField").value;
+            if (document.getElementById("minLgSubtlcdInputField").value) {
+                constraints.minLgSubtlcd = document.getElementById("minLgSubtlcdInputField").value;
             } else {
-                delete constraints.minSubtlcd;
+                delete constraints.minLgSubtlcd;
             }
-            if (document.getElementById("maxSubtlcdInputField").value) {
-                constraints.maxSubtlcd = document.getElementById("maxSubtlcdInputField").value;
+            if (document.getElementById("maxLgSubtlcdInputField").value) {
+                constraints.maxLgSubtlcd = document.getElementById("maxLgSubtlcdInputField").value;
             } else {
-                delete constraints.maxSubtlcd;
+                delete constraints.maxLgSubtlcd;
             }
             localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
             self.close();
         }
     </script>
-    <title>Constraints on Subtlcd</title>
+    <title>Constraints on LgSubtlcd</title>
 </head>
 
 <body onload="init()">
 <div id="errorMessage"></div>
-<h2>Please enter any desired contraints upon the SUBTLCD or leave blank if none are desired:</h2>
+<h2>Please enter any desired contraints upon the LGSUBTLCD or leave blank if none are desired:</h2>
 <div style="text-align: center;">
     <table border="0">
         <tr>
@@ -53,9 +53,9 @@
             <th align="left">Maximum Value</th>
         </tr>
         <TR ALIGN=LEFT>
-            <TD>SUBTLCD</TD>
-            <TD><INPUT ID="minSubtlcdInputField" TYPE=TEXT NAME="minSubtlcd"></TD>
-            <TD><INPUT ID="maxSubtlcdInputField" TYPE=TEXT NAME="maxSubtlcd">
+            <TD>LGSUBTLCD</TD>
+            <TD><INPUT ID="minLgSubtlcdInputField" TYPE=TEXT NAME="minLgSubtlcd"></TD>
+            <TD><INPUT ID="maxLgSubtlcdInputField" TYPE=TEXT NAME="maxLgSubtlcd">
         </TR>
     </table>
     <BR>
