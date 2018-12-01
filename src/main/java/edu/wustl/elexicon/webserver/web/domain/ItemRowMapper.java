@@ -6,11 +6,20 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 
 public class ItemRowMapper implements RowMapper<MappedItem> {
+
+    public static final DecimalFormat DF0 = new DecimalFormat("#,###");
+    public static final DecimalFormat DF1 = new DecimalFormat("#,##0.0");
+    public static final DecimalFormat DF2 = new DecimalFormat("#,##0.00");
+    public static final DecimalFormat DF3 = new DecimalFormat("#,##0.000");
+
+
     @Override
     public MappedItem mapRow(ResultSet resultSet, int i) throws SQLException {
         MappedItem mappedItem = new MappedItem();
@@ -78,7 +87,30 @@ public class ItemRowMapper implements RowMapper<MappedItem> {
     String getObject(ResultSet resultSet, String columnLabel) throws SQLException {
         if (hasColumn(resultSet, columnLabel)) {
             Object object = resultSet.getObject(columnLabel);
-            return  object == null ? "#" : object.toString();
+            if  (object == null){
+                return "#";
+            }
+            if (object instanceof Integer ){
+                return DF0.format(object);
+            }
+            if  (columnLabel.equals("i_nmg_mean_accuracy") ||
+                    columnLabel.equals("i_zscore")||
+                    columnLabel.equals("i_nmg_zscore")){
+                return DF3.format(object);
+            }
+            if  ( columnLabel.equals("freq_rel") ||
+                    columnLabel.equals("i_mean_accuracy")){
+                return DF2.format(object);
+            }
+            if  (columnLabel.equals("freq_g_mean") ||
+                    columnLabel.equals("freq_l_mean")||
+                    columnLabel.equals("freq_n")){
+                return DF1.format(object);
+            }
+            if (object instanceof Double){
+                return DF3.format(object);
+            }
+            return  object.toString();
         } else {
             return null;
         }

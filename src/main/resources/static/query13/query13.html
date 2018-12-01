@@ -14,6 +14,7 @@
             if (!constraintsJson)
                 constraintsJson='{}';
             $('#form').append('<input type="hidden" name="constraints" value=' + constraintsJson + ' />');
+            $('#form').append('<input type="hidden" name="field" value="Word" />');
             $('#form').submit();
             return true;
         }

@@ -22,13 +22,19 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-    <p th:text="'Hello, ' + ${name} + '!'" />
-    <p th:text="'Fields ' + ${field} + '.'" />
-    <p th:text="'Constraints ' + ${constraints} + '.'" />
-    <p th:text="'Distribution ' + ${dist} + '.'" />
-    <p th:text="'Scope ' + ${scope} + '.'" />
-        <hr>
-        <div w3-include-html="/include/footer.html"></div>
+            <h4>Your query of the Restricted Lexicon returned 46 Items:</h4>
+            <table border="1">
+                <span th:each="row : ${items}">
+                    <tr align="CENTER">
+                        <span th:each="col : ${row}">
+                        <td th:text="${col}"/>
+                        </span>
+                    </tr>
+                </span>
+            </table>
+
+            <hr>
+            <div w3-include-html="/include/footer.html"></div>
         </td>
     </tr>
     </tbody>
