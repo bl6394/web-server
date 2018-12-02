@@ -1,6 +1,6 @@
 package edu.wustl.elexicon.webserver.web;
 
-public enum Items {
+public enum ItemViewModelMapper {
 
     WORD ("word", "Word", null, null),
     LENGTH ("length", "Length", "minLength", "maxLength"),
@@ -75,7 +75,7 @@ public enum Items {
     private final String maxConstraintName;
 
 
-    Items(String columnName, String fieldName, String minConstraintName, String maxConstraintName){
+    ItemViewModelMapper(String columnName, String fieldName, String minConstraintName, String maxConstraintName){
         this.columnName = columnName;
         this.fieldName = fieldName;
         this.minConstraintName = minConstraintName;

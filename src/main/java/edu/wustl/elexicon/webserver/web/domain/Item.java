@@ -1,7 +1,5 @@
 package edu.wustl.elexicon.webserver.web.domain;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;

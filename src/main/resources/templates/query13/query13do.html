@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta http-equiv="Content-Type"
           content="text/html; charset=UTF-8">
     <title>ELP Home - Generate List - Query</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="/include/styles.css">
     <script src="/include/library.js"></script>
 </head>
 
@@ -22,11 +22,11 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-            <h4>Your query of the Restricted Lexicon returned  <span th:text="${itemCount}">0</span> Items:</h4>
+            <h4>Your query of the <span th:text="${targetDb}">Unknown</span> Lexicon returned  <span th:text="${itemCount}">0</span> Items:</h4>
             <table border="1">
                      <tr align="CENTER">
                         <span th:each="headers : ${items.get(0)}">
-                            <th th:text="${headers.key}"/>
+                            <th th:text="${headers.key}">header key</th>
                         </span>
                          <span th:if="${orthoButtonFlag}">
                              <th>Button</th>
@@ -35,7 +35,7 @@
                 <span th:each="row : ${items}">
                     <tr align="CENTER">
                         <span th:each="entry : ${row}">
-                            <td th:text="${entry.value}"/>
+                            <td th:text="${entry.value}">header value</td>
                         </span>
                         <span th:if="${orthoButtonFlag}">
                             <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Ortho N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
