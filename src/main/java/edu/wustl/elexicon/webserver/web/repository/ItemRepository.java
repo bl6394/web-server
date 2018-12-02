@@ -1,10 +1,7 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
 import edu.wustl.elexicon.webserver.web.Items;
-import edu.wustl.elexicon.webserver.web.domain.Item;
-import edu.wustl.elexicon.webserver.web.domain.ItemRowMapper;
-import edu.wustl.elexicon.webserver.web.domain.ItemRowMapper2;
-import edu.wustl.elexicon.webserver.web.domain.MappedItem;
+import edu.wustl.elexicon.webserver.web.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ItemRepository {
@@ -32,6 +30,12 @@ public class ItemRepository {
         String sql = "select " + createSelectList(fieldNames) +" from item";
         List<List<String>> query = jdbcTemplate.query(sql, new ItemRowMapper2());
         query.add(0,createColumnHeaderList(fieldNames));
+        return  query;
+    }
+
+    public List<Map<String, String>> get3(List<String> fieldNames){
+        String sql = "select " + createSelectList(fieldNames) +" from item";
+        List<Map<String, String>> query = jdbcTemplate.query(sql, new ItemRowMapper3());
         return  query;
     }
 

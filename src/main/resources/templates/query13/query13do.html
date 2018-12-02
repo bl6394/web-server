@@ -22,12 +22,23 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-            <h4>Your query of the Restricted Lexicon returned 46 Items:</h4>
+            <h4>Your query of the Restricted Lexicon returned  <span th:text="${itemCount}">0</span> Items:</h4>
             <table border="1">
+                     <tr align="CENTER">
+                        <span th:each="headers : ${items.get(0)}">
+                            <th th:text="${headers.key}"/>
+                        </span>
+                         <span th:if="${orthoButtonFlag}">
+                             <th>Button</th>
+                         </span>
+                    </tr>
                 <span th:each="row : ${items}">
                     <tr align="CENTER">
-                        <span th:each="col : ${row}">
-                        <td th:text="${col}"/>
+                        <span th:each="entry : ${row}">
+                            <td th:text="${entry.value}"/>
+                        </span>
+                        <span th:if="${orthoButtonFlag}">
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Ortho N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                     </tr>
                 </span>
