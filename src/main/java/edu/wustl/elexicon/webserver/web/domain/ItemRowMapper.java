@@ -8,6 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ItemRowMapper implements RowMapper<Map<String, String>> {
@@ -20,7 +21,7 @@ public class ItemRowMapper implements RowMapper<Map<String, String>> {
 
     @Override
     public Map<String, String> mapRow(ResultSet resultSet, int i) throws SQLException {
-        Map<java.lang.String, java.lang.String> row = new HashMap<>();
+        Map<java.lang.String, java.lang.String> row = new LinkedHashMap<>();
         for (ItemViewModelMapper mapper : ItemViewModelMapper.values()) {
             String object = getObject(resultSet, mapper.getColumnName());
             if (object != null) {
