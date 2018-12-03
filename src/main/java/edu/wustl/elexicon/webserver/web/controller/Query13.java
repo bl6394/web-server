@@ -30,6 +30,7 @@ public class Query13 {
         model.addAttribute("scope", formData.get("scope"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));
+        System.out.println(query);
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete" );
