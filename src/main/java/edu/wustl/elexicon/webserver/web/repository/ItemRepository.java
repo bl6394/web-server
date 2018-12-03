@@ -2,7 +2,6 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
 import edu.wustl.elexicon.webserver.web.domain.ItemRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +18,8 @@ public class ItemRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, String>> get(List<String> fieldNames, String targetDb){
-        String sql = "select " + createSelectList(fieldNames) +" from " + targetDb + " where length = 1";
+    public List<Map<String, String>> get(List<String> fieldNames, String targetDb, List<String> criteria){
+        String sql = "select " + createSelectList(fieldNames) +" from " + targetDb + createCriteriaExpression(criteria);
         System.out.println(sql);
         return jdbcTemplate.query(sql, new ItemRowMapper());
     }
@@ -37,6 +36,18 @@ public class ItemRepository {
 
     private String createSelectList(List<String> fieldNames){
         StringBuilder columns = new StringBuilder("Word, ");
+        for (ItemViewModelMapper item : ItemViewModelMapper.values()){
+            if (fieldNames.contains(item.getFieldName()) ){
+                columns.append(item.getColumnName());
+                columns.append(", ");
+            }
+        }
+        columns.delete(columns.length() -2, columns.length());
+        return columns.toString();
+    }
+
+    private String createCriteriaExpression(List<String> fieldNames){
+        StringBuilder columns = new StringBuilder();
         for (ItemViewModelMapper item : ItemViewModelMapper.values()){
             if (fieldNames.contains(item.getFieldName()) ){
                 columns.append(item.getColumnName());

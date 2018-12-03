@@ -25,7 +25,6 @@ public class ItemRowMapper implements RowMapper<Map<String, String>> {
         for (ItemViewModelMapper mapper : ItemViewModelMapper.values()) {
             String object = getObject(resultSet, mapper.getColumnName());
             if (object != null) {
-                System.out.println(mapper.getFieldName());
                 row.put(mapper.getFieldName(), object);
             }
         }

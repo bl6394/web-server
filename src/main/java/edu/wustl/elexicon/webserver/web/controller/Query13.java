@@ -25,12 +25,11 @@ public class Query13 {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
         System.out.println(formData);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb);
+        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("criteria"));
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("scope", formData.get("scope"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));
-        System.out.println(query);
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete" );
