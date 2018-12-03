@@ -23,6 +23,7 @@ public class Query13 {
 
     @PostMapping (value = "/query13/query13do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        System.out.println(formData);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb);
         model.addAttribute("dist", formData.get("dist"));
