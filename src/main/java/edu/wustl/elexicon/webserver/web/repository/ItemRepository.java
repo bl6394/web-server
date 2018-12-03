@@ -36,7 +36,7 @@ public class ItemRepository {
     }
 
     private String createSelectList(List<String> fieldNames){
-        StringBuilder columns = new StringBuilder();
+        StringBuilder columns = new StringBuilder("Word, ");
         for (ItemViewModelMapper item : ItemViewModelMapper.values()){
             if (fieldNames.contains(item.getFieldName()) ){
                 columns.append(item.getColumnName());
