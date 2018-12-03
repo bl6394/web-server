@@ -33,7 +33,7 @@ public class Query13 {
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete" );
         model.addAttribute("orthoButtonFlag", formData.get("OrthoBTN"));
-        return "/query13/query13do";
+        return "/query13do";
     }
 
 }
