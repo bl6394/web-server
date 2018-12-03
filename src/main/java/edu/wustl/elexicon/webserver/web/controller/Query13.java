@@ -1,5 +1,6 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -9,6 +10,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class Query13 {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
         System.out.println(formData);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("criteria"));
+        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("constraints"));
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("scope", formData.get("scope"));
         model.addAttribute("constraints", formData.get("constraints"));

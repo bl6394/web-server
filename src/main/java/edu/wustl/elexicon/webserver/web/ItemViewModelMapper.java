@@ -54,6 +54,24 @@ public enum ItemViewModelMapper {
 
     private final String columnName;
 
+    public static ItemViewModelMapper getByMinConstraint(String minConstraintName) {
+        for (ItemViewModelMapper value : ItemViewModelMapper.values()){
+            if (value.minConstraintName != null && value.minConstraintName.equals(minConstraintName)){
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public static ItemViewModelMapper getByMaxConstraint(String maxConstraintName) {
+        for (ItemViewModelMapper value : ItemViewModelMapper.values()){
+            if (value.maxConstraintName != null && value.maxConstraintName.equals(maxConstraintName)){
+                return value;
+            }
+        }
+        return null;
+    }
+
     public String getColumnName() {
         return columnName;
     }
