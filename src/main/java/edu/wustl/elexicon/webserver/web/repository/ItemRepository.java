@@ -21,6 +21,7 @@ public class ItemRepository {
 
     public List<Map<String, String>> get(List<String> fieldNames, String targetDb){
         String sql = "select " + createSelectList(fieldNames) +" from " + targetDb;
+        System.out.println(sql);
         return jdbcTemplate.query(sql, new ItemRowMapper());
     }
 
