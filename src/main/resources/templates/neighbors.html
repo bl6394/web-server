@@ -7,6 +7,21 @@
 <h3 th:text="${title}" align='LEFT'>Title</h3>
 <h4 th:text="${neighborword}" align='LEFT'>Word</h4>
 
+<table border="1">
+    <tr align="CENTER">
+                        <span th:each="headers : ${items.get(0)}">
+                            <th th:text="${headers.key}">header key</th>
+                        </span>
+    </tr>
+    <span th:each="row : ${items}">
+                    <tr align="CENTER">
+                        <span th:each="entry : ${row}">
+                            <td th:text="${entry.value}">header value</td>
+                        </span>
+                    </tr>
+                </span>
+</table>
+
 <FORM><input type="button" Value="Close Window" ONCLICK="window.close()"></FORM>
 <body>
 </body>

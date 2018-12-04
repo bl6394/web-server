@@ -31,6 +31,7 @@ public class NeighborController {
         String target = allRequestParams.get("target");
         String targetDb = target.equals("Restricted") ? "item" : "itemplus";
         List<Map<String, String>> query = neighborRepository.get(word, targetDb);
+        model.addAttribute("items", query);
         setTitle(model, type);
         return "neighbors";
     }
