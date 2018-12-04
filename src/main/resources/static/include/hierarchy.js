@@ -110,3 +110,17 @@ function linkIt(whichEl, whichHref) {
 
 }
 
+function toggleOnAllCheckboxes(source) {
+    checkboxes = document.getElementsByName('field');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = true;
+    }
+}
+
+function toggleOffAllCheckboxes(source) {
+    checkboxes = document.getElementsByName('field');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = false;
+    }
+}
+
