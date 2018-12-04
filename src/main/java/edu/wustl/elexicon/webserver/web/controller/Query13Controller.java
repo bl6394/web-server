@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class Query13 {
+public class Query13Controller {
     
     private ItemRepository itemRepository;
 
-    public Query13(ItemRepository itemRepository){
+    public Query13Controller(ItemRepository itemRepository){
         this.itemRepository = itemRepository;
     }
 

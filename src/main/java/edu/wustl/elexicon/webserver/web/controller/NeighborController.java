@@ -1,6 +1,7 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
+import edu.wustl.elexicon.webserver.web.repository.NeighborRepository;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,10 +17,10 @@ import java.util.Map;
 @Controller
 public class NeighborController {
 
-    private ItemRepository itemRepository;
+    private NeighborRepository neighborRepository;
 
-    public NeighborController(ItemRepository itemRepository){
-        this.itemRepository = itemRepository;
+    public NeighborController(NeighborRepository neighborRepository){
+        this.neighborRepository = neighborRepository;
     }
 
     @GetMapping (value = "/neighbors")
@@ -28,7 +29,7 @@ public class NeighborController {
         setWord(model, word);
         String type = allRequestParams.get("type");
         String target = allRequestParams.get("target");
-//        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("constraints"));
+        List<Map<String, String>> query = neighborRepository.get(word, target);
         setTitle(model, type);
         return "neighbors";
     }

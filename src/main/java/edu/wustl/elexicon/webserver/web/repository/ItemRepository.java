@@ -2,12 +2,9 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
-import edu.wustl.elexicon.webserver.web.domain.ItemRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 @Service
