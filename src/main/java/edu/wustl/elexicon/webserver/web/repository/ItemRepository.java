@@ -35,6 +35,9 @@ public class ItemRepository {
     }
 
     private String createSelectList(List<String> fieldNames){
+        if (fieldNames.isEmpty()){
+            return "Word";
+        }
         StringBuilder columns = new StringBuilder("Word, ");
         for (ItemViewModelMapper item : ItemViewModelMapper.values()){
             if (fieldNames.contains(item.getFieldName()) ){
