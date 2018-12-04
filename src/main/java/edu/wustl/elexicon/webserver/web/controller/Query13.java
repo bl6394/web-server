@@ -41,6 +41,11 @@ public class Query13 {
         model.addAttribute("phonoHButtonFlag", formData.get("PhonoHBTN"));
         model.addAttribute("ogButtonFlag", formData.get("OGBTN"));
         model.addAttribute("oghFlag", formData.get("OGHBTN"));
+        if (query.isEmpty()) {
+            model.addAttribute("errorMessage", "You query generated no results!");
+            model.addAttribute("errorBackLink", "/query13/query13.html");
+            return "errorback";
+        }
         return "query13do";
     }
 
