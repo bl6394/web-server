@@ -40,6 +40,18 @@
                         <span th:if="${orthoButtonFlag}">
                             <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Ortho N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
+                        <span th:if="${phonoButtonFlag}">
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Phono N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                        </span>
+                        <span th:if="${phonoHButtonFlag}">
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Phono H N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                        </span>
+                         <span th:if="${ogButtonFlag}">
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="OG N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                        </span>
+                         <span th:if="${oghButtonFlag}">
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="OGH N..." th:onclick="|window.open('http://cnn.com?word=${row.get('Word')}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                        </span>
                     </tr>
                 </span>
             </table>

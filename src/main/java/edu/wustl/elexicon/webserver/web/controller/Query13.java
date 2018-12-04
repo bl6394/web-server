@@ -37,6 +37,10 @@ public class Query13 {
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete" );
         model.addAttribute("orthoButtonFlag", formData.get("OrthoBTN"));
+        model.addAttribute("phonoButtonFlag", formData.get("PhonoBTN"));
+        model.addAttribute("phonoHButtonFlag", formData.get("PhonoHBTN"));
+        model.addAttribute("ogButtonFlag", formData.get("OGBTN"));
+        model.addAttribute("oghFlag", formData.get("OGHBTN"));
         return "query13do";
     }
 
