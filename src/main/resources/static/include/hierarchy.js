@@ -115,16 +115,6 @@ function toggleOnAllCheckboxes(source) {
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = true;
     }
-    btn1 = document.getElementByName('OrthoBTN');
-    btn1.checked = true;
-    btn2 = document.getElementByName('PhonoBTN');
-    btn2.checked = true;
-    btn3 = document.getElementByName('PhonoHBTN');
-    btn3.checked = true;
-    btn4 = document.getElementByName('OGBTN');
-    btn4.checked = true;
-    btn5 = document.getElementByName('OGHBTN');
-    btn5.checked = true;
 }
 
 function toggleOffAllCheckboxes(source) {
@@ -132,15 +122,5 @@ function toggleOffAllCheckboxes(source) {
     for(var i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = false;
     }
-    btn1 = document.getElementByName('OrthoBTN');
-    btn1.checked = false;
-    btn2 = document.getElementByName('PhonoBTN');
-    btn2.checked = false;
-    btn3 = document.getElementByName('PhonoHBTN');
-    btn3.checked = false;
-    btn4 = document.getElementByName('OGBTN');
-    btn4.checked = false;
-    btn5 = document.getElementByName('OGHBTN');
-    btn5.checked = false;
 }
 

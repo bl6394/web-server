@@ -49,19 +49,19 @@
                         <span th:each="entry : ${row}">
                             <td th:text="${entry.value}">header value</td>
                         </span>
-                        <span th:if="${orthoButtonFlag}">
+                        <span th:if="${orthoButtonFlag} == true">
                             <TD><INPUT type="button" class="elpButton" name="dummy" value="Ortho N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=neighbors&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
-                        <span th:if="${phonoButtonFlag}">
+                        <span th:if="${phonoButtonFlag} == true">
                             <TD><INPUT type="button" class="elpButton" name="dummy" value="Phono N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=phono&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
-                        <span th:if="${phonoHButtonFlag}">
+                        <span th:if="${phonoHButtonFlag} == true">
                             <TD><INPUT type="button" class="elpButton" name="dummy" value="Phono H N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=phonoh&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
-                         <span th:if="${ogButtonFlag}">
+                         <span th:if="${ogButtonFlag} == true">
                             <TD><INPUT type="button" class="elpButton" name="dummy" value="OG N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=og&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
-                         <span th:if="${oghButtonFlag}">
+                         <span th:if="${oghButtonFlag} == true">
                             <TD><INPUT type="button" class="elpButton" name="dummy" value="OGH N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=ogh&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                     </tr>

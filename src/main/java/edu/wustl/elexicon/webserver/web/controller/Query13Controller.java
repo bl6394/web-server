@@ -51,11 +51,11 @@ public class Query13Controller {
     }
 
     private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        model.addAttribute("orthoButtonFlag", formData.get("OrthoBTN"));
-        model.addAttribute("phonoButtonFlag", formData.get("PhonoBTN"));
-        model.addAttribute("phonoHButtonFlag", formData.get("PhonoHBTN"));
-        model.addAttribute("ogButtonFlag", formData.get("OGBTN"));
-        model.addAttribute("oghButtonFlag", formData.get("OGHBTN"));
+        model.addAttribute("orthoButtonFlag", formData.get("field").contains("OrthoBTN"));
+        model.addAttribute("phonoButtonFlag", formData.get("field").contains("PhonoBTN"));
+        model.addAttribute("phonoHButtonFlag", formData.get("field").contains("PhonoHBTN"));
+        model.addAttribute("ogButtonFlag", formData.get("field").contains("OGBTN"));
+        model.addAttribute("oghButtonFlag", formData.get("field").contains("OGHBTN"));
     }
 
 }
