@@ -51,6 +51,9 @@ public class Query13Controller {
     }
 
     private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        if (formData.get("field") == null) {
+            return;
+        }
         model.addAttribute("orthoButtonFlag", formData.get("field").contains("OrthoBTN"));
         model.addAttribute("phonoButtonFlag", formData.get("field").contains("PhonoBTN"));
         model.addAttribute("phonoHButtonFlag", formData.get("field").contains("PhonoHBTN"));
