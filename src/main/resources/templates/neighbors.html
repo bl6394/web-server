@@ -8,7 +8,7 @@
 <h3 th:text="${title}" align='LEFT'>Title</h3>
 <h4 th:text="${neighborword}" align='LEFT'>Word</h4>
 
-<span th:if="${items}">
+<span th:if="${queryEmpty == 'False'}">
     <table border="1">
 
         <tr align="CENTER">
@@ -25,7 +25,7 @@
         </span>
     </table>
 </span>
-<span th:unless="${items}">
+<span th:unless="${queryEmpty == 'False'}">
     <H2>There are no neighbors...</H2>
 </span>
 
