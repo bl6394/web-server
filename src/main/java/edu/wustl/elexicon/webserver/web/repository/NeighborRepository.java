@@ -25,8 +25,27 @@ public class NeighborRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, String>> get(String word, String targetDb) {
-        String targetNeighborDb = targetDb.equals("item") ? "ortho_n" : "ortho_n_plus";
+    public List<Map<String, String>> get(String word, String type, String targetDb) {
+        String targetNeighborDb;
+        switch (type) {
+            case "neighbors":
+                targetNeighborDb = targetDb.equals("item") ? "ortho_n" : "ortho_n_plus";
+                break;
+            case "phono":
+                targetNeighborDb = targetDb.equals("item") ? "phono_n" : "phono_n_plus";
+                break;
+            case "phonoh":
+                targetNeighborDb = targetDb.equals("item") ? "phonoh_n" : "phonoh_n_plus";
+                break;
+            case "og":
+                targetNeighborDb = targetDb.equals("item") ? "og_n" : "og_n_plus";
+                break;
+            case "ogh":
+                targetNeighborDb = targetDb.equals("item") ? "ogh_n" : "ogh_n_plus";
+                break;
+            default:
+                throw new IllegalArgumentException("invalid parameter");
+        }
         String sql = "SELECT word, freq_hal from " + targetDb + " where wid in (Select n_wid from " + targetNeighborDb + " where wid in (select wid from " + targetDb + " where word = ?) ) order by freq_hal";
         NeighborRowCallbackHandler neighborRowCallbackHandler = new NeighborRowCallbackHandler();
         jdbcTemplate.query(sql, new PreparedStatementSetter() {

@@ -1,14 +1,9 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
-import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
 import edu.wustl.elexicon.webserver.web.repository.NeighborRepository;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -28,11 +23,11 @@ public class NeighborController {
         String word = allRequestParams.get("word");
         setWord(model, word);
         String type = allRequestParams.get("type");
+        setType(model, type);
         String target = allRequestParams.get("target");
         String targetDb = target.equals("Restricted") ? "item" : "itemplus";
-        List<Map<String, String>> query = neighborRepository.get(word, targetDb);
+        List<Map<String, String>> query = neighborRepository.get(word, type, targetDb);
         model.addAttribute("items", query);
-        setTitle(model, type);
         return "neighbors";
     }
 
@@ -44,7 +39,7 @@ public class NeighborController {
         }
     }
 
-    private void setTitle(Model model, String type) {
+    private void setType(Model model, String type) {
         switch (type) {
             case "neighbors":
                 model.addAttribute("title", "Orthographic Neighbors");
