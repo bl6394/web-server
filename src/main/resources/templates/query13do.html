@@ -6,7 +6,6 @@
           content="text/html; charset=UTF-8">
     <title>ELP Home - Generate List - Query</title>
     <link rel="stylesheet" href="/include/styles.css">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="/include/library.js"></script>
 </head>
 
@@ -51,19 +50,19 @@
                             <td th:text="${entry.value}">header value</td>
                         </span>
                         <span th:if="${orthoButtonFlag}">
-                            <TD><INPUT type="button" class="w3-button w3-black" name="dummy" value="Ortho N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=neighbors&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Ortho N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=neighbors&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                         <span th:if="${phonoButtonFlag}">
-                            <TD><INPUT type="button" class="w3-button w3-black" #4CAF50;" name="dummy" value="Phono N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=phono&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Phono N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=phono&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                         <span th:if="${phonoHButtonFlag}">
-                            <TD><INPUT type="button" class="w3-button w3-black" #4CAF50;" name="dummy" value="Phono H N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=phonoh&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="Phono H N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=phonoh&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                          <span th:if="${ogButtonFlag}">
-                            <TD><INPUT type="button" class="w3-button w3-black" value="OG N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=og&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="OG N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=og&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                          <span th:if="${oghButtonFlag}">
-                            <TD><INPUT type="button" class="w3-button w3-black" value="OGH N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=ogh&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                            <TD><INPUT type="button" style="background-color: #4CAF50;" name="dummy" value="OGH N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=ogh&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                     </tr>
                 </span>
