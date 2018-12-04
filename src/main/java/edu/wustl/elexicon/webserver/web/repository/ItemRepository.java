@@ -35,7 +35,7 @@ public class ItemRepository {
     }
 
     private String createSelectList(List<String> fieldNames){
-        if (fieldNames.isEmpty()){
+        if (fieldNames == null || fieldNames.isEmpty()){
             return "Word";
         }
         StringBuilder columns = new StringBuilder("Word, ");
