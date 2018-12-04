@@ -2,7 +2,7 @@
 <head>
     <meta http-equiv="Content-Type"
           content="text/html; charset=iso-8859-1">
-    <title>ELP Home - Generate List - Query Start</title>
+    <title>ELP Home - Submit Lists - Query Start</title>
     <link rel="stylesheet" href="/include/styles.css">
     <script src="/include/library.js"></script>
     <script src="/include/hierarchy.js"></script>
@@ -33,13 +33,32 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-            <h2>Generate Lists of Items with Specific Lexical Characteristics</h2>
-            <p>The following query generates a list of Words based
-                upon user selectable criteria. You may select both the
-                characteristics that you wish to see as well as enter any limits
-                upon their values. Only those words and characteristics
-                matching all of your entered contraints will be displayed.</p>
-            <form id="form" action="/query13/query13do" method="POST" name="query13">
+            <h2>Submit Lists of Items to generate Lexical Characteristics</h2>
+            <p>Searches the ELP Database for all words contained within a list of words provided by the user.  This list can be submited in the form of a user submitted list.  This list can either be a text file, or can be pasted within a text block on this form.</p>
+            <form id="form" action="/query14/query14do" method="POST" name="query14">
+                <hr>
+                <table border="0" width="100%">
+                    <caption ALIGN='LEFT'><h2>List Options:</H2></CAPTION>
+                    <tr>
+                        <th align='LEFT'>Method of Submission:</th>
+                        <th align='LEFT'></th>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <UL>
+                                <INPUT TYPE=RADIO NAME="List" VALUE="TLIST" CHECKED >Free Text List of Words<BR>
+                                <INPUT TYPE=RADIO NAME="List" VALUE="FILE">Filename Containing List of Words<BR>
+                            </UL>
+                        </td>
+                        <td>
+                            <UL>
+
+                            </UL>
+                        </td>
+                    </tr>
+                </table>
+
                 <hr>
                 <h2>Please select the fields and any constraints to be used in the query:</h2>
 
