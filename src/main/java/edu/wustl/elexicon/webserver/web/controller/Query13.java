@@ -36,17 +36,26 @@ public class Query13 {
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete" );
-        model.addAttribute("orthoButtonFlag", formData.get("OrthoBTN"));
-        model.addAttribute("phonoButtonFlag", formData.get("PhonoBTN"));
-        model.addAttribute("phonoHButtonFlag", formData.get("PhonoHBTN"));
-        model.addAttribute("ogButtonFlag", formData.get("OGBTN"));
-        model.addAttribute("oghFlag", formData.get("OGHBTN"));
+        addButtonFlags(formData, model);
+        if (query.size() > 2000){
+            model.addAttribute("errorMessage", "You query returned " + query.size() + " results and is too large to display." );
+            model.addAttribute("errorBackLink", "/query13/query13.html");
+            return "errorback";
+        }
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query13/query13.html");
             return "errorback";
         }
         return "query13do";
+    }
+
+    private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        model.addAttribute("orthoButtonFlag", formData.get("OrthoBTN"));
+        model.addAttribute("phonoButtonFlag", formData.get("PhonoBTN"));
+        model.addAttribute("phonoHButtonFlag", formData.get("PhonoHBTN"));
+        model.addAttribute("ogButtonFlag", formData.get("OGBTN"));
+        model.addAttribute("oghFlag", formData.get("OGHBTN"));
     }
 
 }
