@@ -1,6 +1,7 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
+import edu.wustl.elexicon.webserver.web.repository.TempTableRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -18,15 +19,10 @@ import javax.servlet.MultipartConfigElement;
 @Controller
 public class Query14Controller {
 
-//    @Bean
-//    public MultipartConfigElement multipartConfigElement() {
-//        return new MultipartConfigElement("");
-//    }
-
-    private ItemRepository itemRepository;
+    private TempTableRepository tempTableRepository;
 
     public Query14Controller(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
+        this.tempTableRepository = tempTableRepository;
     }
 
     @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -39,6 +35,7 @@ public class Query14Controller {
     public String processFile(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes) {
         System.out.println(file.getContentType());
+        tempTableRepository.get();
         return "query14/query14final";
     }
 
