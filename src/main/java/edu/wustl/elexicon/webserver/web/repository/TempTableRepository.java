@@ -26,6 +26,7 @@ public class TempTableRepository {
     public void get(){
         System.out.println("Start");
         jdbcTemplate.execute("drop TEMPORARY table if exists bjorntable;");
+        jdbcTemplate.execute("insert into bjorntable values ('test')");
         jdbcTemplate.execute("create temporary table bjorntable (word VARCHAR(50) NOT NULL);");
         System.out.println("After CREATE");
         jdbcTemplate.execute("insert into bjorntable values ('test')");
