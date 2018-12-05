@@ -27,12 +27,14 @@ public class TempTableRepository {
         System.out.println("Start");
         String sql = "drop TEMPORARY table if exists bjorntable;";
         jdbcTemplate.execute(sql);
+        String sql3 = "create temporary table bjorntable (word VARCHAR(50) NOT NULL);";
+        jdbcTemplate.execute(sql);
         System.out.println("After CREATE");
         String sql1 = "insert into bjorntable values ('test')";
         jdbcTemplate.execute(sql);
         System.out.println("After insert");
         try {
-            Thread.sleep(60000);
+            Thread.sleep(30000);
             System.out.println("After sleep");
         } catch (InterruptedException e) {
             e.printStackTrace();
