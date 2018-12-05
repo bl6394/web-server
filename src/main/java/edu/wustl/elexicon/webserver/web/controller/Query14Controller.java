@@ -21,7 +21,7 @@ public class Query14Controller {
 
     private TempTableRepository tempTableRepository;
 
-    public Query14Controller(ItemRepository itemRepository) {
+    public Query14Controller(TempTableRepository tempTableRepository) {
         this.tempTableRepository = tempTableRepository;
     }
 
