@@ -20,13 +20,10 @@ public class TempTableRepository {
     }
 
     @Transactional
-    public void get(){
-        System.out.println("Start");
-        jdbcTemplate.execute("drop TEMPORARY table if exists bjorntable;");
-        jdbcTemplate.execute("create temporary table bjorntable (word VARCHAR(50) NOT NULL);");
-        System.out.println("After CREATE");
+    public void get(List<String> words){
+        jdbcTemplate.execute("drop table if exists bjorntable;");
+        jdbcTemplate.execute("create table bjorntable (word VARCHAR(50) NOT NULL);");
         jdbcTemplate.execute("insert into bjorntable values ('test')");
-        System.out.println("After insert");
         return;
     }
 

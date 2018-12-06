@@ -12,7 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class Query14Controller {
@@ -32,35 +33,30 @@ public class Query14Controller {
     @PostMapping(value = "/query14/query14filedo")
     public String processFile(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes) {
-        String[] result = parse(file);
-        tempTableRepository.get();
+        List<String> words = parseFile(file);
+        tempTableRepository.get(words);
         return "query14/query14final";
     }
 
-    private String[] parse(MultipartFile file) {
+    private List<String> parseFile(MultipartFile file) {
+        List<String> words = new ArrayList<>();
         String line;
         try {
             InputStream is = file.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             while ((line = br.readLine()) != null) {
-                String[] words = line.split(" ");
-                for (int i = 0; i < words.length; i++) {
-                    if (words[i].equals("/commercial/")) {
-                        i++;
-                        while (!words[i].equals("|")) {
-                            System.out.print(words[i]);
-                            i++; //Don't forget to check your index to be sure you are never out of bounds! Not done here.
-                            //You can also remove the "/" caracter if needed.
-                        }
-
-                    }
+                String cleanLine = line.replaceAll("[^A-Za-z\']", " ");
+                String[] wordsInLine = cleanLine.split("\\s+");
+                for (int i = 0; i < wordsInLine.length; i++) {
+                    words.add(wordsInLine[i]);
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return words;
     }
 
 
