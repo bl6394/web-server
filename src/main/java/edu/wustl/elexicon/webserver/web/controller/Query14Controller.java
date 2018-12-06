@@ -36,8 +36,9 @@ public class Query14Controller {
                               RedirectAttributes redirectAttributes, Model model) {
         List<String> words = parseFile(file);
         List<String> fieldNames = new ArrayList<>();
-        fieldNames.add("word");
-        fieldNames.add("length");
+        fieldNames.add("Length");
+        fieldNames.add("Freq_HAL");
+        fieldNames.add("Ortho_N");
         List<Map<String, String>> query = tempTableRepository.get(words, fieldNames, "item");
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
