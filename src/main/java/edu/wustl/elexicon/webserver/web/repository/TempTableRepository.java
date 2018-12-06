@@ -22,9 +22,9 @@ public class TempTableRepository {
     @Transactional
     public void get(List<String> words){
         jdbcTemplate.execute("drop table if exists bjorntable;");
-        jdbcTemplate.execute("create table bjorntable (word VARCHAR(50) NOT NULL);");
+        jdbcTemplate.execute("create table bjorntable (word VARCHAR(50) NOT NULL, PRIMARY KEY (word));");
         for(String word: words){
-            jdbcTemplate.update("insert into bjorntable values ('?')", word);
+            jdbcTemplate.update("insert into bjorntable values (?) ON DUPLICATE KEY UPDATE word = word;", word);
         }
         return;
     }
