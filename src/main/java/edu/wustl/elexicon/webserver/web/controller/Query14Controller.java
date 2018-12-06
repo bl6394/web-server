@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class Query14Controller {
@@ -32,13 +33,25 @@ public class Query14Controller {
 
     @PostMapping(value = "/query14/query14filedo")
     public String processFile(@RequestParam("file") MultipartFile file,
-                              RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes, Model model) {
         List<String> words = parseFile(file);
         List<String> fieldNames = new ArrayList<>();
         fieldNames.add("word");
         fieldNames.add("length");
-        tempTableRepository.get(words,fieldNames, "item" );
+        List<Map<String, String>> query = tempTableRepository.get(words, fieldNames, "item");
+        model.addAttribute("items", query);
+        model.addAttribute("itemCount", query.size());
+        model.addAttribute("targetDb", "Restricted" );
+        addButtonFlags(model);
         return "query14/query14final";
+    }
+
+    private void addButtonFlags(Model model) {
+        model.addAttribute("orthoButtonFlag", Boolean.TRUE);
+        model.addAttribute("phonoButtonFlag", Boolean.TRUE);
+        model.addAttribute("phonoHButtonFlag", Boolean.TRUE);
+        model.addAttribute("ogButtonFlag", Boolean.TRUE);
+        model.addAttribute("oghButtonFlag", Boolean.TRUE);
     }
 
     private List<String> parseFile(MultipartFile file) {
