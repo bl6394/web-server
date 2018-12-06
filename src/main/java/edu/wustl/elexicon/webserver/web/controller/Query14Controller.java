@@ -49,7 +49,11 @@ public class Query14Controller {
                 String cleanLine = line.replaceAll("[^A-Za-z\']", " ");
                 String[] wordsInLine = cleanLine.split("\\s+");
                 for (int i = 0; i < wordsInLine.length; i++) {
-                    words.add(wordsInLine[i]);
+                    String cleanWord = wordsInLine[i].trim();
+                    if (!cleanWord.isEmpty()) {
+                        System.out.println(cleanWord);
+                        words.add(cleanWord);
+                    }
                 }
             }
 
