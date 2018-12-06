@@ -34,7 +34,10 @@ public class Query14Controller {
     public String processFile(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes) {
         List<String> words = parseFile(file);
-        tempTableRepository.get(words);
+        List<String> fieldNames = new ArrayList<>();
+        fieldNames.add("word");
+        fieldNames.add("length");
+        tempTableRepository.get(words,fieldNames, "item" );
         return "query14/query14final";
     }
 

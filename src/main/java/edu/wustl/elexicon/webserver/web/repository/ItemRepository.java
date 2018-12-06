@@ -20,7 +20,6 @@ public class ItemRepository {
 
     public List<Map<String, String>> get(List<String> fieldNames, String targetDb, List<String> criteria){
         String sql = "select " + createSelectList(fieldNames) +" from " + targetDb + createCriteriaExpression(criteria);
-        System.out.println(sql);
         return jdbcTemplate.query(sql, new ItemRowMapper());
     }
 
