@@ -27,7 +27,6 @@ public class Query14Controller {
 
     @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processList(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        System.out.println(formData);
         return "query14/query14final";
     }
 
@@ -68,7 +67,6 @@ public class Query14Controller {
                 for (int i = 0; i < wordsInLine.length; i++) {
                     String cleanWord = wordsInLine[i].trim();
                     if (!cleanWord.isEmpty()) {
-                        System.out.println(cleanWord);
                         words.add(cleanWord);
                     }
                 }
@@ -83,7 +81,6 @@ public class Query14Controller {
 
     @PostMapping(value = "/query14/query14do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        System.out.println(formData);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         return formData.get("list").contains("tlist") ? "query14/query14list" : "query14/query14file";
     }

@@ -21,8 +21,8 @@ public class TempTableRepository {
 
     @Transactional
     public List<Map<String, String>> get(List<String> words, List<String> fieldNames, String targetDb){
-        jdbcTemplate.execute("drop table if exists bjorntable;");
-        jdbcTemplate.execute("create table bjorntable (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
+//        jdbcTemplate.execute("drop temporary table if exists bjorntable;");
+        jdbcTemplate.execute("create temporary table bjorntable (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
         for(String word: words){
             jdbcTemplate.update("insert into bjorntable values (?) ON DUPLICATE KEY UPDATE tempword = tempword;", word);
         }
