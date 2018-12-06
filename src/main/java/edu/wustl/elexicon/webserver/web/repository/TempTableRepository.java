@@ -23,7 +23,9 @@ public class TempTableRepository {
     public void get(List<String> words){
         jdbcTemplate.execute("drop table if exists bjorntable;");
         jdbcTemplate.execute("create table bjorntable (word VARCHAR(50) NOT NULL);");
-        jdbcTemplate.execute("insert into bjorntable values ('test')");
+        for(String word: words){
+            jdbcTemplate.execute("insert into bjorntable values ('" + word + "')");
+        }
         return;
     }
 
