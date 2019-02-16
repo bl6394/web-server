@@ -25,9 +25,10 @@ public class Query14Controller {
         this.tempTableRepository = tempTableRepository;
     }
 
-    @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String processList(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        return "query14/query14final";
+    @PostMapping(value = "/query14/query14do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
+        return formData.get("list").contains("tlist") ? "query14/query14list" : "query14/query14file";
     }
 
     @PostMapping(value = "/query14/query14filedo")
@@ -43,6 +44,11 @@ public class Query14Controller {
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", "Restricted" );
         addButtonFlags(model);
+        return "query14/query14final";
+    }
+
+    @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String processList(@RequestBody MultiValueMap<String, String> formData, Model model) {
         return "query14/query14final";
     }
 
@@ -78,12 +84,6 @@ public class Query14Controller {
         return words;
     }
 
-
-    @PostMapping(value = "/query14/query14do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        return formData.get("list").contains("tlist") ? "query14/query14list" : "query14/query14file";
-    }
 
 
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8">
+    <title>ELP Home - Generate List - Query</title>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script src="/include/library.js"></script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<table border="1" width="100%">
+    <tbody>
+    <tr>
+        <td colspan="2" width="100%">
+            <div w3-include-html="/include/header.html"></div>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="100" bgcolor="#FFFFFF">
+            <div w3-include-html="/include/iconbar.html"></div>
+        </td>
+        <td valign="top" width="100%" bgcolor="#FFFFFF">
+
+            <h2>Your output will been sent to your address: <span th:text="${emailAddress}"></span></h2>
+            <h2>Your transaction number is: YYYYYYYYYY</h2>
+            <h1>Thank you for using the English Lexicon Project!</h1>
+            <a href="/index.html">Click here to return Home</a>
+
+            <hr>
+            <div w3-include-html="/include/footer.html"></div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    includeHTML();
+</script>
+
+</body>
+</html>

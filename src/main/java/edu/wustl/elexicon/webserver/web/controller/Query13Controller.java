@@ -1,6 +1,7 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +14,10 @@ import java.util.Map;
 
 @Controller
 public class Query13Controller {
-    
+
+    @Value("${maxquerysize}")
+    private Integer maxHtmlResultSet;
+
     private ItemRepository itemRepository;
 
     public Query13Controller(ItemRepository itemRepository){
@@ -32,10 +36,8 @@ public class Query13Controller {
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete" );
         addButtonFlags(formData, model);
-        if (query.size() > 2000){
-            model.addAttribute("errorMessage", "You query returned " + query.size() + " results and is too large to display." );
-            model.addAttribute("errorBackLink", "/query13/query13.html");
-            return "errorback";
+        if (query.size() > maxHtmlResultSet){
+            return "query13/emailresponse";
         }
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
@@ -43,6 +45,17 @@ public class Query13Controller {
             return "errorback";
         }
         return "query13/query13do";
+    }
+
+    @PostMapping (value = "/query13/query13domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        String emailAddress = formData.getFirst("address");
+        if (emailAddress.isEmpty()) {
+            model.addAttribute("errorMessage", "You must supply an email address!");
+            return "query13/emailresponse";
+        }
+        model.addAttribute("emailAddress", emailAddress);
+        return "query13/query13doemail";
     }
 
     private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
