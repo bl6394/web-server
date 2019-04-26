@@ -21,6 +21,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 @Service
@@ -42,22 +44,18 @@ public class Mailer {
 
 
 
-    public void sendMessage(String text, String email){
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(email);
-//        message.setSubject("English Lexicon Project: Trx #");
-//        message.setText("This is a test.");
+    public void sendMessage(String trxId, String csv, String email){
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             MimeBodyPart body = new MimeBodyPart();
-            body.setText("This is a test.");
+            body.setText("Transaction Id " + trxId + "\n");
             MimeBodyPart attachment = new MimeBodyPart();
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(body);
-            ByteArrayDataSource ds = new ByteArrayDataSource("foo bar", "text/plain");
+            ByteArrayDataSource ds = new ByteArrayDataSource(csv, "text/plain");
             attachment.setDataHandler(new DataHandler(ds));
-            attachment.setFileName("bjorntest.txt");
+            attachment.setFileName("I-" + trxId + ".txt");
             multipart.addBodyPart(attachment);
             mimeMessage.setContent(multipart);
         } catch (MessagingException | IOException e) {
@@ -67,7 +65,7 @@ public class Mailer {
         MimeMailMessage mmm = new MimeMailMessage(mimeMessage);
 
         mmm.setTo( email );
-        mmm.setSubject("English Lexicon Project: Trx #");
+        mmm.setSubject("English Lexicon Project: Trx " + trxId);
         mmm.setFrom("bjorn.loftis@gmail.com");
 
         mailSender.send(mmm.getMimeMessage());
@@ -87,7 +85,7 @@ public class Mailer {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        props.put("mail.debug", "false");
 
         return mailSender;
     }
