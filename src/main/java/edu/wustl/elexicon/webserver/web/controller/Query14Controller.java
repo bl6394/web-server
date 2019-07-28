@@ -20,14 +20,19 @@ import java.util.Map;
 public class Query14Controller {
 
     private TempTableRepository tempTableRepository;
+    private Map<String, Object> sessionStore;
 
-    public Query14Controller(TempTableRepository tempTableRepository) {
+    public Query14Controller(TempTableRepository tempTableRepository, Map<String, Object> sessionStore) {
         this.tempTableRepository = tempTableRepository;
+        this.sessionStore = sessionStore;
     }
 
     @PostMapping(value = "/query14/query14do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
+        List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
+        sessionStore.put("TARGET_DB", targetDb);
+        sessionStore.put("FIELDS", fields);
         return formData.get("list").contains("tlist") ? "query14/query14list" : "query14/query14file";
     }
 
@@ -35,20 +40,37 @@ public class Query14Controller {
     public String processFile(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes, Model model) {
         List<String> words = parseFile(file);
-        List<String> fieldNames = new ArrayList<>();
-        fieldNames.add("Length");
-        fieldNames.add("Freq_HAL");
-        fieldNames.add("Ortho_N");
-        List<Map<String, String>> query = tempTableRepository.get(words, fieldNames, "item");
+        String targetDb = (String) sessionStore.get("TARGET_DB");
+        List<String> fields = (List<String>) sessionStore.get("FIELDS");
+        List<Map<String, String>> query = tempTableRepository.get(words, fields, targetDb);
+        if (query.isEmpty()) {
+            model.addAttribute("errorMessage", "You query generated no results!");
+            model.addAttribute("errorBackLink", "/query14/query14.html");
+            return "errorback";
+        }
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
-        model.addAttribute("targetDb", "Restricted" );
+        model.addAttribute("targetDb", targetDb.equals("items") ? "Restricted" : "Complete");
         addButtonFlags(model);
         return "query14/query14final";
     }
 
     @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processList(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        String wordlist = formData.get("wordlist").get(0);
+        List<String> words = parseString(wordlist);
+        List<String> fields = (List<String>) sessionStore.get("FIELDS");
+        String targetDb = (String) sessionStore.get("TARGET_DB");
+        List<Map<String, String>> query = tempTableRepository.get(words, fields, targetDb);
+        if (query.isEmpty()) {
+            model.addAttribute("errorMessage", "You query generated no results!");
+            model.addAttribute("errorBackLink", "/query14/query14.html");
+            return "errorback";
+        }
+        model.addAttribute("items", query);
+        model.addAttribute("itemCount", query.size());
+        model.addAttribute("targetDb", targetDb.equals("items") ? "Restricted" : "Complete");
+        addButtonFlags(model);
         return "query14/query14final";
     }
 
@@ -84,6 +106,18 @@ public class Query14Controller {
         return words;
     }
 
+    private List<String> parseString(String wordlist) {
+        List<String> words = new ArrayList<>();
+        String cleanLine = wordlist.replaceAll("[^A-Za-z\']", " ");
+        String[] wordsInLine = cleanLine.split("\\s+");
+        for (int i = 0; i < wordsInLine.length; i++) {
+            String cleanWord = wordsInLine[i].trim();
+            if (!cleanWord.isEmpty()) {
+                words.add(cleanWord);
+            }
+        }
+        return words;
+    }
 
 
 }
