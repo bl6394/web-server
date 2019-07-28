@@ -37,6 +37,9 @@
             <h3>There are four main functions of this Web Site:</h3>
             <ul>
                 <li><h4><a href="wordstart.html" title="">Generate Lists of Words with Specific Lexical Characteristics</a></h4></li>
+                <li><h4><a href="http://elexicon.wustl.edu/NonWordStart.asp" title="">Generate Lists of Nonwords with Specific Lexical Characteristics</a></h4></li>
+                <li><h4><a href="http://elexicon.wustl.edu/Query17/Query17.asp" title="">Access Trial-Level Lexical Decision Data</a></h4></li>
+                <li><h4><a href="http://elexicon.wustl.edu/Query18/Query18.asp" title="">Access Trial-Level Naming Data</a></h4></li>
             </ul>
             <p><input class="elpButton" type="button" value="Click Here for User&#39;s Guide..." onclick="location.href='/documents/userguide.pdf'"></p>
             <p><input class="elpButton" type="button" value="Click Here for Levenshtein Distance Paper..." onclick="location.href='/documents/Yarkoni_Balota_Yap_in_press.pdf'"></p>
