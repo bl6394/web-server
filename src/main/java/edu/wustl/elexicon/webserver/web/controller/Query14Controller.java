@@ -1,6 +1,9 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
+import edu.wustl.elexicon.webserver.service.CsvWriter;
+import edu.wustl.elexicon.webserver.service.Mailer;
 import edu.wustl.elexicon.webserver.web.repository.TempTableRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,34 +14,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 public class Query14Controller {
 
+    @Value("${maxquerysize}")
+    private Integer maxHtmlResultSet;
+
     private TempTableRepository tempTableRepository;
     private Map<String, Object> sessionStore;
+    private final Mailer mailer;
+    private final CsvWriter csvWriter;
 
-    public Query14Controller(TempTableRepository tempTableRepository, Map<String, Object> sessionStore) {
+    public Query14Controller(TempTableRepository tempTableRepository, Map<String, Object> sessionStore, Mailer mailer, CsvWriter csvWriter) {
         this.tempTableRepository = tempTableRepository;
         this.sessionStore = sessionStore;
+        this.csvWriter = csvWriter;
+        this.mailer = mailer;
     }
 
     @PostMapping(value = "/query14/query14do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model) {
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
+        List<String> distubution = formData.get("dist");
         sessionStore.put("TARGET_DB", targetDb);
         sessionStore.put("FIELDS", fields);
+        sessionStore.put("DISTRIBUTION", distubution);
         return formData.get("list").contains("tlist") ? "query14/query14list" : "query14/query14file";
     }
 
     @PostMapping(value = "/query14/query14filedo")
     public String processFile(@RequestParam("file") MultipartFile file,
-                              RedirectAttributes redirectAttributes, Model model) {
+                              RedirectAttributes redirectAttributes, Model model, HttpSession session) {
         List<String> words = parseFile(file);
         String targetDb = (String) sessionStore.get("TARGET_DB");
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
@@ -48,15 +62,20 @@ public class Query14Controller {
             model.addAttribute("errorBackLink", "/query14/query14.html");
             return "errorback";
         }
+        session.setAttribute("items", query);
+        List<String> distubution = (List<String>) sessionStore.get("DISTRIBUTION");
+        if (query.size() > maxHtmlResultSet || distubution.contains("email") ) {
+            return "query14/emailresponse";
+        }
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
-        model.addAttribute("targetDb", targetDb.equals("items") ? "Restricted" : "Complete");
+        model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         addButtonFlags(model);
         return "query14/query14final";
     }
 
     @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String processList(@RequestBody MultiValueMap<String, String> formData, Model model) {
+    public String processList(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
@@ -67,11 +86,38 @@ public class Query14Controller {
             model.addAttribute("errorBackLink", "/query14/query14.html");
             return "errorback";
         }
+        session.setAttribute("items", query);
+        List<String> distubution = (List<String>) sessionStore.get("DISTRIBUTION");
+        if (query.size() > maxHtmlResultSet || distubution.contains("email") ) {
+            return "query14/emailresponse";
+        }
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
-        model.addAttribute("targetDb", targetDb.equals("items") ? "Restricted" : "Complete");
+        model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         addButtonFlags(model);
         return "query14/query14final";
+    }
+
+    @PostMapping(value = "/query14/query14domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String emailAddress = formData.getFirst("address");
+        if (emailAddress.isEmpty()) {
+            model.addAttribute("errorMessage", "You must supply an email address!");
+            return "query14/emailresponse";
+        }
+        model.addAttribute("emailAddress", emailAddress);
+        final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
+        if (items != null) {
+            String uuid = UUID.randomUUID().toString();
+            model.addAttribute("trxId", uuid);
+            try {
+                String csv = csvWriter.writeCsv(uuid, items);
+                mailer.sendMessage(uuid, csv, emailAddress);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "query14/query14doemail";
     }
 
     private void addButtonFlags(Model model) {
