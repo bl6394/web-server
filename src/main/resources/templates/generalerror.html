@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8">
+    <title>English Lexicon Project - Error</title>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script src="/include/library.js"></script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<table border="1" width="100%">
+    <tbody>
+    <tr>
+        <td colspan="2" width="100%">
+            <div w3-include-html="/include/header.html"></div>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="100" bgcolor="#FFFFFF">
+            <div w3-include-html="/include/iconbar.html"></div>
+        </td>
+        <td valign="top" width="100%" bgcolor="#FFFFFF">
+
+            <h2><span th:text="${errorMessage}">Error Message</span></h2>
+
+            <H3>Click <a href='/index.html'>here</a> to go back to the ELP home.</h3>
+
+
+            <hr>
+            <div w3-include-html="/include/footer.html"></div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    includeHTML();
+</script>
+
+</body>
+</html>
