@@ -1,5 +1,6 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
+import edu.wustl.elexicon.webserver.web.ExpDataViewModelMapper;
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -21,7 +22,7 @@ public class ExpDataRowMapper implements RowMapper<Map<String, String>> {
     @Override
     public Map<String, String> mapRow(ResultSet resultSet, int i) throws SQLException {
         Map<String, String> row = new LinkedHashMap<>();
-        for (ItemViewModelMapper mapper : ItemViewModelMapper.values()) {
+        for (ExpDataViewModelMapper mapper : ExpDataViewModelMapper.values()) {
             String object = getObject(resultSet, mapper.getColumnName());
             if (object != null) {
                 row.put(mapper.getFieldName(), object);

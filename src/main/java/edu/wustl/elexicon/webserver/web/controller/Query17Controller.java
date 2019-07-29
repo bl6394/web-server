@@ -67,12 +67,12 @@ public class Query17Controller {
             return "query17/emailresponse";
         }
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("expData");
-        if (items != null) {
+        final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("expData");
+        if (expData != null) {
             String uuid = UUID.randomUUID().toString();
             model.addAttribute("trxId", uuid);
             try {
-                String csv = csvWriter.writeCsv(uuid, items);
+                String csv = csvWriter.writeCsv(uuid, expData);
                 mailer.sendMessage(uuid, csv, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
