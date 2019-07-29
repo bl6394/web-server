@@ -23,12 +23,18 @@
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
 
-            <h2><span th:text="${errorMessage}">Error Message</span></h2>
+            <p>Your query resulted in a large set of results. Your results will be returned by email. Please enter your email address in the box below.</p>
 
-            <h3>Please go <a href="somepage.html" th:href="@{|${errorBackLink}|}" >Back</a> to resubmit your query.</h3>
+            <span th:if="${errorMessage} != null"><h2><span th:text="${errorMessage}">Error Message</span></h2></span>
 
-            <H3>Click <a href='/index.html'>here</a> to go back to the ELP home.</h3>
 
+            <form id="form" action="/query18/query18domore" method="POST" name="query18domore">
+
+                <p>Email Address: <INPUT TYPE="TEXT" NAME="address"></p>
+
+                <INPUT TYPE="SUBMIT" VALUE="Submit Email Address">
+                <INPUT TYPE="Reset" VALUE="Clear">
+            </form>
 
             <hr>
             <div w3-include-html="/include/footer.html"></div>

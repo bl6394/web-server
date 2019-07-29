@@ -1,10 +1,11 @@
 package edu.wustl.elexicon.webserver.web;
 
-public enum ExpDataViewModelMapper {
+public enum NamingDataViewModelMapper {
 
     SUB_ID ("sub_id", "Sub_ID", "minSubId", "maxSubId"),
-    Type ("type", "Type", "minType", "maxType"),
-    D_ACCURACY ("d_accuracy", "D_ACCURACY", "minDAccuracy", "maxDAccuracy"),
+    TRIAL ("trial", "Trial", "minTrial", "maxTrial"),
+    D_DURATION ("d_duration", "D_Duration", "minDDuration", "maxDDuration"),
+    D_ACCURACY ("d_accuracy", "D_Accuracy", "minDAccuracy", "maxDAccuracy"),
     D_RT ("d_rt", "D_RT", "minDRT", "maxDRT"),
     D_WORD ("d_word", "D_Word", "minDWord", "maxDWord"),
     OUTLIER ("outlier", "Outlier", "minOutlier", "maxOutlier"),
@@ -12,8 +13,8 @@ public enum ExpDataViewModelMapper {
 
     private final String columnName;
 
-    public static ExpDataViewModelMapper getByMinConstraint(String minConstraintName) {
-        for (ExpDataViewModelMapper value : ExpDataViewModelMapper.values()){
+    public static NamingDataViewModelMapper getByMinConstraint(String minConstraintName) {
+        for (NamingDataViewModelMapper value : NamingDataViewModelMapper.values()){
             if (value.minConstraintName != null && value.minConstraintName.equals(minConstraintName)){
                 return value;
             }
@@ -21,8 +22,8 @@ public enum ExpDataViewModelMapper {
         return null;
     }
 
-    public static ExpDataViewModelMapper getByMaxConstraint(String maxConstraintName) {
-        for (ExpDataViewModelMapper value : ExpDataViewModelMapper.values()){
+    public static NamingDataViewModelMapper getByMaxConstraint(String maxConstraintName) {
+        for (NamingDataViewModelMapper value : NamingDataViewModelMapper.values()){
             if (value.maxConstraintName != null && value.maxConstraintName.equals(maxConstraintName)){
                 return value;
             }
@@ -51,7 +52,7 @@ public enum ExpDataViewModelMapper {
     private final String maxConstraintName;
 
 
-    ExpDataViewModelMapper(String columnName, String fieldName, String minConstraintName, String maxConstraintName){
+    NamingDataViewModelMapper(String columnName, String fieldName, String minConstraintName, String maxConstraintName){
         this.columnName = columnName;
         this.fieldName = fieldName;
         this.minConstraintName = minConstraintName;

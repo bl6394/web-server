@@ -1,7 +1,6 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
-import edu.wustl.elexicon.webserver.web.ExpDataViewModelMapper;
-import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.LexicalDataViewModelMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -11,7 +10,7 @@ import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ExpDataRowMapper implements RowMapper<Map<String, String>> {
+public class LexicalDataRowMapper implements RowMapper<Map<String, String>> {
 
     private static final DecimalFormat DF0 = new DecimalFormat("#,###");
     private static final DecimalFormat DF1 = new DecimalFormat("#,##0.0");
@@ -22,7 +21,7 @@ public class ExpDataRowMapper implements RowMapper<Map<String, String>> {
     @Override
     public Map<String, String> mapRow(ResultSet resultSet, int i) throws SQLException {
         Map<String, String> row = new LinkedHashMap<>();
-        for (ExpDataViewModelMapper mapper : ExpDataViewModelMapper.values()) {
+        for (LexicalDataViewModelMapper mapper : LexicalDataViewModelMapper.values()) {
             String object = getObject(resultSet, mapper.getColumnName());
             if (object != null) {
                 row.put(mapper.getFieldName(), object);

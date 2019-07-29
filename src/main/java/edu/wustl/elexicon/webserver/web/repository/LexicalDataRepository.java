@@ -1,7 +1,7 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.wustl.elexicon.webserver.web.ExpDataViewModelMapper;
+import edu.wustl.elexicon.webserver.web.LexicalDataViewModelMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,24 +11,24 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ExpDataRepository {
+public class LexicalDataRepository {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private JdbcTemplate jdbcTemplate;
 
-    public ExpDataRepository(JdbcTemplate jdbcTemplate){
+    public LexicalDataRepository(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Map<String, String>> get(List<String> fieldNames, List<String> criteria){
         String sql = "select " + createSelectList(fieldNames) +" from exp_data " + createCriteriaExpression(criteria);
-        return jdbcTemplate.query(sql, new ExpDataRowMapper());
+        return jdbcTemplate.query(sql, new LexicalDataRowMapper());
     }
 
     List<String> createColumnHeaderList(List<String> fieldNames){
         List<String> columnHeaders = new ArrayList<>();
-        for (ExpDataViewModelMapper expData : ExpDataViewModelMapper.values()){
+        for (LexicalDataViewModelMapper expData : LexicalDataViewModelMapper.values()){
             if (fieldNames.contains(expData.getFieldName()) ){
                 columnHeaders.add(expData.getFieldName());
             }
@@ -41,7 +41,7 @@ public class ExpDataRepository {
             return "";
         }
         StringBuilder columns = new StringBuilder();
-        for (ExpDataViewModelMapper expData : ExpDataViewModelMapper.values()){
+        for (LexicalDataViewModelMapper expData : LexicalDataViewModelMapper.values()){
             if (fieldNames.contains(expData.getFieldName()) ){
                 columns.append(expData.getColumnName());
                 columns.append(", ");
@@ -57,13 +57,13 @@ public class ExpDataRepository {
             StringBuilder whereClause = new StringBuilder(" WHERE ");
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().startsWith("min")) {
-                    ExpDataViewModelMapper field = ExpDataViewModelMapper.getByMinConstraint(entry.getKey());
+                    LexicalDataViewModelMapper field = LexicalDataViewModelMapper.getByMinConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
                         whereClause.append(" " + field.getFieldName() + " >= " + Double.parseDouble(value) + " and");
                     }
                 } else if (entry.getKey().startsWith("max")) {
-                    ExpDataViewModelMapper field = ExpDataViewModelMapper.getByMaxConstraint(entry.getKey());
+                    LexicalDataViewModelMapper field = LexicalDataViewModelMapper.getByMaxConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
                         whereClause.append(" " + field.getFieldName() + " <= " + Double.parseDouble(value) + " and");

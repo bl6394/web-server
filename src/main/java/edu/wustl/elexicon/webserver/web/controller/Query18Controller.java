@@ -2,7 +2,7 @@ package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
-import edu.wustl.elexicon.webserver.web.repository.LexicalDataRepository;
+import edu.wustl.elexicon.webserver.web.repository.NamingDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,27 +20,27 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-public class Query17Controller {
+public class Query18Controller {
 
-    private final Logger log = LoggerFactory.getLogger(Query17Controller.class);
+    private final Logger log = LoggerFactory.getLogger(Query18Controller.class);
 
     @Value("${maxquerysize}")
     private Integer maxHtmlResultSet;
 
     private final Mailer mailer;
     private final CsvWriter csvWriter;
-    private final LexicalDataRepository lexicalDataRepository;
+    private final NamingDataRepository namingDataRepository;
 
-    public Query17Controller(LexicalDataRepository lexicalDataRepository, Mailer mailer, CsvWriter csvWriter) {
-        this.lexicalDataRepository = lexicalDataRepository;
+    public Query18Controller(NamingDataRepository namingDataRepository, Mailer mailer, CsvWriter csvWriter) {
+        this.namingDataRepository = namingDataRepository;
         this.mailer = mailer;
         this.csvWriter = csvWriter;
     }
 
-    @PostMapping(value = "/query17/query17do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/query18/query18do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        List<Map<String, String>> query = lexicalDataRepository.get(formData.get("field"), formData.get("constraints"));
-        session.setAttribute("expData", query);
+        List<Map<String, String>> query = namingDataRepository.get(formData.get("field"), formData.get("constraints"));
+        session.setAttribute("expData1", query);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));
@@ -49,24 +49,24 @@ public class Query17Controller {
         addButtonFlags(formData, model);
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
-            model.addAttribute("errorBackLink", "/query17/query17.html");
+            model.addAttribute("errorBackLink", "/query18/query18.html");
             return "errorback";
         }
         if (query.size() > maxHtmlResultSet || formData.get("dist").contains("email") ) {
-            return "query17/emailresponse";
+            return "query18/emailresponse";
         }
-        return "query17/query17do";
+        return "query18/query18do";
     }
 
-    @PostMapping(value = "/query17/query17domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/query18/query18domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String emailAddress = formData.getFirst("address");
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
-            return "query17/emailresponse";
+            return "query18/emailresponse";
         }
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("expData");
+        final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("expData1");
         if (expData != null) {
             String uuid = UUID.randomUUID().toString();
             model.addAttribute("trxId", uuid);
@@ -77,7 +77,7 @@ public class Query17Controller {
                 e.printStackTrace();
             }
         }
-        return "query17/query17doemail";
+        return "query18/query18doemail";
     }
 
 

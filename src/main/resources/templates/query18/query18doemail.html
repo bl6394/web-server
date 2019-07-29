@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type"
           content="text/html; charset=UTF-8">
-    <title>English Lexicon Project - Error</title>
+    <title>ELP Home - Generate List - Query</title>
     <link rel="stylesheet" href="/include/styles.css">
     <script src="/include/library.js"></script>
 </head>
@@ -23,12 +23,10 @@
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
 
-            <h2><span th:text="${errorMessage}">Error Message</span></h2>
-
-            <h3>Please go <a href="somepage.html" th:href="@{|${errorBackLink}|}" >Back</a> to resubmit your query.</h3>
-
-            <H3>Click <a href='/index.html'>here</a> to go back to the ELP home.</h3>
-
+            <h2>Your output will been sent to your address: <span th:text="${emailAddress}"></span></h2>
+            <h2>Your transaction number is: <span th:text="${trxId}"></span></h2>
+            <h1>Thank you for using the English Lexicon Project!</h1>
+            <a href="/index.html">Click here to return Home</a>
 
             <hr>
             <div w3-include-html="/include/footer.html"></div>
