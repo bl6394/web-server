@@ -39,19 +39,8 @@ public class ExpDataRowMapper implements RowMapper<Map<String, String>> {
             if (object instanceof Integer) {
                 return DF0.format(object);
             }
-            if (columnLabel.equals("i_nmg_mean_accuracy") ||
-                    columnLabel.equals("i_zscore") ||
-                    columnLabel.equals("i_nmg_zscore")) {
+            if (columnLabel.equals("d_zscore")) {
                 return DF3.format(object);
-            }
-            if (columnLabel.equals("freq_rel") ||
-                    columnLabel.equals("i_mean_accuracy")) {
-                return DF2.format(object);
-            }
-            if (columnLabel.equals("freq_g_mean") ||
-                    columnLabel.equals("freq_l_mean") ||
-                    columnLabel.equals("freq_n")) {
-                return DF1.format(object);
             }
             if (object instanceof Double) {
                 return DF3.format(object);

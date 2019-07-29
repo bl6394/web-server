@@ -67,7 +67,7 @@ public class Query17Controller {
             return "query17/emailresponse";
         }
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
+        final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("expData");
         if (items != null) {
             String uuid = UUID.randomUUID().toString();
             model.addAttribute("trxId", uuid);
