@@ -2,6 +2,7 @@ package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
+import edu.wustl.elexicon.webserver.web.repository.ExpDataRepository;
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,26 +30,23 @@ public class Query17Controller {
 
     private final Mailer mailer;
     private final CsvWriter csvWriter;
-    private final ItemRepository itemRepository;
+    private final ExpDataRepository expDataRepository;
 
-    public Query17Controller(ItemRepository itemRepository, Mailer mailer, CsvWriter csvWriter) {
-        this.itemRepository = itemRepository;
+    public Query17Controller(ExpDataRepository expDataRepository, Mailer mailer, CsvWriter csvWriter) {
+        this.expDataRepository = expDataRepository;
         this.mailer = mailer;
         this.csvWriter = csvWriter;
     }
 
-    @PostMapping(value = "/query13/query17do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/query17/query17do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("constraints"));
-        session.setAttribute("items", query);
+        List<Map<String, String>> query = expDataRepository.get(formData.get("field"), formData.get("constraints"));
+        session.setAttribute("expData", query);
         model.addAttribute("dist", formData.get("dist"));
-        model.addAttribute("scope", formData.get("scope"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));
-        model.addAttribute("items", query);
-        model.addAttribute("itemCount", query.size());
-        model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete");
+        model.addAttribute("expData", query);
+        model.addAttribute("expDataCount", query.size());
         addButtonFlags(formData, model);
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
