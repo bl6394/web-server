@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minDAccuracy ) {
+                    document.getElementById("minDAccuracyInputField").value = constraints.minDAccuracy;
+                }
+                if (constraints.maxDAccuracy) {
+                    document.getElementById("maxDAccuracyInputField").value = constraints.maxDAccuracy;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minDAccuracyInputField").value) {
+                constraints.minDAccuracy = document.getElementById("minDAccuracyInputField").value;
+            } else {
+                delete constraints.minDAccuracy;
+            }
+            if (document.getElementById("maxDAccuracyInputField").value) {
+                constraints.maxDAccuracy = document.getElementById("maxDAccuracyInputField").value;
+            } else {
+                delete constraints.maxDAccuracy;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on D_Accuracy</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the D_Accuracy or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>D_Accuracy</TD>
+            <TD><INPUT ID="minDAccuracyInputField" TYPE=TEXT NAME="minDAccuracy"></TD>
+            <TD><INPUT ID="maxDAccuracyInputField" TYPE=TEXT NAME="maxDAccuracy">
+        </TR>
+    </table>
+    <BR>
+    <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

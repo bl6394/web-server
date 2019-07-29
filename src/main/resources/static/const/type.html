@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minType ) {
+                    document.getElementById("minTypeInputField").value = constraints.minType;
+                }
+                if (constraints.maxType) {
+                    document.getElementById("maxTypeInputField").value = constraints.maxType;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minTypeInputField").value) {
+                constraints.minType = document.getElementById("minTypeInputField").value;
+            } else {
+                delete constraints.minType;
+            }
+            if (document.getElementById("maxTypeInputField").value) {
+                constraints.maxType = document.getElementById("maxTypeInputField").value;
+            } else {
+                delete constraints.maxType;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on Type</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Type or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>Type</TD>
+            <TD><INPUT ID="minTypeInputField" TYPE=TEXT NAME="minType"></TD>
+            <TD><INPUT ID="maxTypeInputField" TYPE=TEXT NAME="maxType">
+        </TR>
+    </table>
+    <BR>
+    <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
