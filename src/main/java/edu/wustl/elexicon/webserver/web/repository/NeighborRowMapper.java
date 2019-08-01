@@ -4,9 +4,7 @@ import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

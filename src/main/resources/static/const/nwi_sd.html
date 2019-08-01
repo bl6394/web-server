@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/include/styles.css">
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minNWISD ) {
+                  document.getElementById("minNWI_SDInputField").value = constraints.minNWISD;
+              }
+              if (constraints.maxNWISD) {
+                  document.getElementById("maxNWI_SDInputField").value = constraints.maxNWISD;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minNWI_SDInputField").value) {
+              constraints.minNWISD = document.getElementById("minNWI_SDInputField").value;
+          } else {
+              delete constraints.minNWISD;
+          }
+          if (document.getElementById("maxNWI_SDInputField").value) {
+              constraints.maxNWISD = document.getElementById("maxNWI_SDInputField").value;
+          } else {
+              delete constraints.maxNWISD;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on NWI_SD</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the NWI_SD or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>NWI_SD</TD>
+      <TD><INPUT ID="minNWI_SDInputField" TYPE=TEXT NAME="minNWI_SD"></TD>
+      <TD><INPUT ID="maxNWI_SDInputField" TYPE=TEXT NAME="maxNWI_SD">
+    </TR>
+  </table>
+  <BR>
+  <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

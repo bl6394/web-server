@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/include/styles.css">
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minNWIMeanAccuracy ) {
+                  document.getElementById("minNWI_Mean_AccuracyInputField").value = constraints.minNWIMeanAccuracy;
+              }
+              if (constraints.maxNWIMeanAccuracy) {
+                  document.getElementById("maxNWI_Mean_AccuracyInputField").value = constraints.maxNWIMeanAccuracy;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minNWI_Mean_AccuracyInputField").value) {
+              constraints.minNWIMeanAccuracy = document.getElementById("minNWI_Mean_AccuracyInputField").value;
+          } else {
+              delete constraints.minNWIMeanAccuracy;
+          }
+          if (document.getElementById("maxNWI_Mean_AccuracyInputField").value) {
+              constraints.maxNWIMeanAccuracy = document.getElementById("maxNWI_Mean_AccuracyInputField").value;
+          } else {
+              delete constraints.maxNWIMeanAccuracy;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on NWI_Mean_Accuracy</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the NWI_Mean_Accuracy or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>NWI_Mean_Accuracy</TD>
+      <TD><INPUT ID="minNWI_Mean_AccuracyInputField" TYPE=TEXT NAME="minNWI_Mean_Accuracy"></TD>
+      <TD><INPUT ID="maxNWI_Mean_AccuracyInputField" TYPE=TEXT NAME="maxNWI_Mean_Accuracy">
+    </TR>
+  </table>
+  <BR>
+  <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

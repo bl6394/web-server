@@ -1,6 +1,7 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.NonWordItemViewModelMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ public class NonWordItemRowMapper implements RowMapper<Map<String, String>> {
     @Override
     public Map<String, String> mapRow(ResultSet resultSet, int i) throws SQLException {
         Map<String, String> row = new LinkedHashMap<>();
-        for (ItemViewModelMapper mapper : ItemViewModelMapper.values()) {
+        for (NonWordItemViewModelMapper mapper : NonWordItemViewModelMapper.values()) {
             String object = getObject(resultSet, mapper.getColumnName());
             if (object != null) {
                 row.put(mapper.getFieldName(), object);
@@ -38,20 +39,6 @@ public class NonWordItemRowMapper implements RowMapper<Map<String, String>> {
             }
             if (object instanceof Integer) {
                 return DF0.format(object);
-            }
-            if (columnLabel.equals("i_nmg_mean_accuracy") ||
-                    columnLabel.equals("i_zscore") ||
-                    columnLabel.equals("i_nmg_zscore")) {
-                return DF3.format(object);
-            }
-            if (columnLabel.equals("freq_rel") ||
-                    columnLabel.equals("i_mean_accuracy")) {
-                return DF2.format(object);
-            }
-            if (columnLabel.equals("freq_g_mean") ||
-                    columnLabel.equals("freq_l_mean") ||
-                    columnLabel.equals("freq_n")) {
-                return DF1.format(object);
             }
             if (object instanceof Double) {
                 return DF3.format(object);

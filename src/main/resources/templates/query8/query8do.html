@@ -22,14 +22,14 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-            <h4>Your query of Lexical Decision Data returned  <span th:text="${nwItemCount}">0</span> Items:</h4>
+            <h4>Your query of NonWord Items returned  <span th:text="${nwItemCount}">0</span> Items:</h4>
             <table border="1">
                      <tr align="CENTER">
-                        <span th:each="headers : ${items.get(0)}">
+                        <span th:each="headers : ${nwItem.get(0)}">
                             <th th:text="${headers.key}">header key</th>
                         </span>
                     </tr>
-                <span th:each="row : ${items}">
+                <span th:each="row : ${nwItem}">
                     <tr align="CENTER">
                         <span th:each="entry : ${row}">
                             <td th:text="${entry.value}">header value</td>

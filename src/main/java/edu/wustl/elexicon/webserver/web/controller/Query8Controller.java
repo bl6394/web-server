@@ -2,7 +2,6 @@ package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
-import edu.wustl.elexicon.webserver.web.repository.LexicalDataRepository;
 import edu.wustl.elexicon.webserver.web.repository.NonWordItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public class Query8Controller {
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));
-        model.addAttribute("nwItemData", query);
+        model.addAttribute("nwItem", query);
         model.addAttribute("nwItemCount", query.size());
         addButtonFlags(formData, model);
         if (query.isEmpty()) {

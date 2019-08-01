@@ -1,7 +1,7 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.NonWordItemViewModelMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +23,12 @@ public class NonWordItemRepository {
 
     public List<Map<String, String>> get(List<String> fieldNames, List<String> criteria){
         String sql = "select " + createSelectList(fieldNames) +" from nw_item " + createCriteriaExpression(criteria);
-        return jdbcTemplate.query(sql, new ItemRowMapper());
+        return jdbcTemplate.query(sql, new NonWordItemRowMapper());
     }
 
     List<String> createColumnHeaderList(List<String> fieldNames){
         List<String> columnHeaders = new ArrayList<>();
-        for (ItemViewModelMapper item : ItemViewModelMapper.values()){
+        for (NonWordItemViewModelMapper item : NonWordItemViewModelMapper.values()){
             if (fieldNames.contains(item.getFieldName()) ){
                 columnHeaders.add(item.getFieldName());
             }
@@ -41,7 +41,7 @@ public class NonWordItemRepository {
             return "Word";
         }
         StringBuilder columns = new StringBuilder("Word, ");
-        for (ItemViewModelMapper item : ItemViewModelMapper.values()){
+        for (NonWordItemViewModelMapper item : NonWordItemViewModelMapper.values()){
             if (fieldNames.contains(item.getFieldName()) ){
                 columns.append(item.getColumnName());
                 columns.append(", ");
@@ -57,13 +57,13 @@ public class NonWordItemRepository {
             StringBuilder whereClause = new StringBuilder(" WHERE ");
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().startsWith("min")) {
-                    ItemViewModelMapper field = ItemViewModelMapper.getByMinConstraint(entry.getKey());
+                    NonWordItemViewModelMapper field = NonWordItemViewModelMapper.getByMinConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
                         whereClause.append(" " + field.getFieldName() + " >= " + Double.parseDouble(value) + " and");
                     }
                 } else if (entry.getKey().startsWith("max")) {
-                    ItemViewModelMapper field = ItemViewModelMapper.getByMaxConstraint(entry.getKey());
+                    NonWordItemViewModelMapper field = NonWordItemViewModelMapper.getByMaxConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
                         whereClause.append(" " + field.getFieldName() + " <= " + Double.parseDouble(value) + " and");
