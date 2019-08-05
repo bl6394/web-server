@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8">
+    <title>ELP Home - Generate List - Query</title>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script src="/include/library.js"></script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<table border="1" width="100%">
+    <tbody>
+    <tr>
+        <td colspan="2" width="100%">
+            <div w3-include-html="/include/header.html"></div>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="100" bgcolor="#FFFFFF">
+            <div w3-include-html="/include/iconbar.html"></div>
+        </td>
+        <td valign="top" width="100%" bgcolor="#FFFFFF">
+
+            <h2>Submit Lists of Items to generate Lexical Characteristics</h2>
+            <form action="/query16/query16listdo" method="POST" name="query16tb">
+                <p>Enter free form text in the box below. Standard punctuation is permitted.</p>
+                <textarea name="wordlist" rows="10" cols="55"></textarea>
+                <br>
+                <input class="elpButton" type="submit" value="Submit List"> <input class="elpButton" type="reset" value="Clear"> </p></form>
+
+            <hr>
+            <div w3-include-html="/include/footer.html"></div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    includeHTML();
+</script>
+
+</body>
+</html>
