@@ -1,0 +1,83 @@
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <title>ELP Home - Submit Lists of Non-Words - Query Start</title>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script src="/include/library.js"></script>
+    <script src="/include/hierarchy.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function buttonDo() {
+            var constraintsJson=localStorage.getItem('CONSTRAINTS');
+            if (!constraintsJson)
+                constraintsJson='{}';
+            $('#form').append('<input type="hidden" name="constraints" value=' + constraintsJson + ' />');
+            $('#form').submit();
+            return true;
+        }
+    </script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<table border="1" width="100%">
+    <tbody>
+    <tr>
+        <td colspan="2" width="100%">
+            <div w3-include-html="/include/header.html"></div>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="100" bgcolor="#FFFFFF">
+            <div w3-include-html="/include/iconbar.html"></div>
+        </td>
+        <td valign="top" width="100%" bgcolor="#FFFFFF">
+            <h2>Submit Arbitrary Lists of Non-Words to generate Lexical Characteristics</h2>
+            <p>Generates lexical characteristics for a user submitted list. This list can either be a text file, or can be pasted within a text block on this form.</p>
+            <form id="form" action="/query19/query19do" method="POST" name="query19">
+                <hr>
+                <table border="0" width="100%">
+                    <caption ALIGN='LEFT'><h2>List Options:</H2></CAPTION>
+                    <tr>
+                        <th align='LEFT'>Method of Submission:</th>
+                        <th align='LEFT'></th>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <UL>
+                                <INPUT TYPE=RADIO NAME="list" VALUE="tlist" CHECKED >Free Text List of Words<BR>
+                                <INPUT TYPE=RADIO NAME="list" VALUE="file">Filename Containing List of Words<BR>
+                            </UL>
+                        </td>
+                        <td>
+                            <UL>
+
+                            </UL>
+                        </td>
+                    </tr>
+                </table>
+
+                <hr>
+                <h2>Please select the fields and any constraints to be used in the query:</h2>
+
+                <div w3-include-html="/query19/hier1.html"></div>
+                <HR>
+                <div w3-include-html="/query19/option1.html"></div>
+                <button class="elpButton" onclick="buttonDo();">Execute Query</button>
+                <input class="elpButton" type="reset" value="Clear"> </p>
+            </form>
+            <hr>
+            <div w3-include-html="/include/footer.html"></div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    includeHTML();
+</script>
+
+</body>
+</html>
