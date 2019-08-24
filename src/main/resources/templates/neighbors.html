@@ -4,8 +4,9 @@
     <link rel="stylesheet" href="/include/styles.css">
     <title th:text="${title}">Title</title>
 </head>
+<body>
 
-<h3 th:text="${title}" align='LEFT'>Title</h3>
+<h3 th:text="${heading}" align='LEFT'>Heading</h3>
 <h4 th:text="${neighborword}" align='LEFT'>Word</h4>
 
 <span th:if="${queryEmpty == 'False'}">
@@ -31,6 +32,5 @@
 
 
 <FORM><input class="elpButton" type="button" Value="Close Window" ONCLICK="window.close()"></FORM>
-<body>
 </body>
 </html>

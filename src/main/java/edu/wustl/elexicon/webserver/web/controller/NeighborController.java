@@ -26,7 +26,8 @@ public class NeighborController {
         setType(model, type);
         String target = allRequestParams.get("target");
         String targetDb = target.equals("Restricted") ? "item" : "itemplus";
-        List<Map<String, String>> query = neighborRepository.get(word, type, targetDb);
+        Boolean withPron = !"neighbors".equalsIgnoreCase(type);
+        List<Map<String, String>> query = neighborRepository.get(word, type, targetDb, withPron );
         model.addAttribute("items", query);
         model.addAttribute("queryEmpty", query == null || query.isEmpty() ?  "True" : "False");
         return "neighbors";
@@ -44,18 +45,23 @@ public class NeighborController {
         switch (type) {
             case "neighbors":
                 model.addAttribute("title", "Orthographic Neighbors");
+                model.addAttribute("heading", "Orthographic Neighborhood");
                 break;
             case "phono":
                 model.addAttribute("title", "Phonological Neighbors");
+                model.addAttribute("heading", "Phonological Neighborhood");
                 break;
             case "phonoh":
                 model.addAttribute("title", "Phonological Neighbors (Homophones)");
+                model.addAttribute("heading", "Phonological Neighborhood (Homophones)");
                 break;
             case "og":
                 model.addAttribute("title", "Phonographic Neighbors");
+                model.addAttribute("heading", "Phonographic Neighborhood");
                 break;
             case "ogh":
                 model.addAttribute("title", "Phonographic Neighbors (Homophones)");
+                model.addAttribute("heading", "Phonographic Neighborhood (Homophones)");
                 break;
             default:
                 throw new IllegalArgumentException("invalid parameter");

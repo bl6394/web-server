@@ -1,6 +1,7 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Map;
 public class NeighborRepository {
 
     private static final ObjectMapper mapper = new ObjectMapper();
+    private static final DecimalFormat DF0 = new DecimalFormat("#,###");
 
     private JdbcTemplate jdbcTemplate;
 
@@ -25,7 +28,7 @@ public class NeighborRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, String>> get(String word, String type, String targetDb) {
+    public List<Map<String, String>> get(String word, String type, String targetDb, Boolean withPron) {
         String targetNeighborDb;
         switch (type) {
             case "neighbors":
@@ -46,8 +49,8 @@ public class NeighborRepository {
             default:
                 throw new IllegalArgumentException("invalid parameter");
         }
-        String sql = "SELECT word, freq_hal from " + targetDb + " where wid in (Select n_wid from " + targetNeighborDb + " where wid in (select wid from " + targetDb + " where word = ?) ) order by freq_hal";
-        NeighborRowCallbackHandler neighborRowCallbackHandler = new NeighborRowCallbackHandler();
+        String sql =  (withPron ? "SELECT word, pron, freq_hal from " : "SELECT word, freq_hal from ")  + targetDb + " where wid in (Select n_wid from " + targetNeighborDb + " where wid in (select wid from " + targetDb + " where word = ?) ) order by freq_hal";
+        NeighborRowCallbackHandler neighborRowCallbackHandler = new NeighborRowCallbackHandler(withPron);
         jdbcTemplate.query(sql, new PreparedStatementSetter() {
             public void setValues(PreparedStatement preparedStatement) throws
                     SQLException {
@@ -59,8 +62,10 @@ public class NeighborRepository {
 
     class NeighborRowCallbackHandler implements RowCallbackHandler {
         private List<Map<String, String>> aList;
+        private Boolean withPron;
 
-        public NeighborRowCallbackHandler() {
+        public NeighborRowCallbackHandler(Boolean withPron) {
+            this.withPron = withPron;
             aList = new ArrayList<Map<String, String>>();
         }
 
@@ -68,8 +73,11 @@ public class NeighborRepository {
             Map<String, String> map = new HashMap<>();
             String word = rs.getString("word");
             map.put("Word", word);
+            if (withPron){
+                map.put("Pron", rs.getString("pron"));
+            }
             int freqHal = rs.getInt("freq_hal");
-            map.put("Freq_Hal", String.valueOf(freqHal));
+            map.put("Freq_Hal", DF0.format(freqHal));
             aList.add(map);
         }
 
