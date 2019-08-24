@@ -39,7 +39,9 @@ public class TempTableRepository {
     }
 
     private List<Map<String, String>> createSummmaryResponse(List<String> fieldNames, String targetDb) {
-        return null;
+        String summarySelectList = createSummarySelectList(fieldNames);
+        String sql = "select " + createSummarySelectList(fieldNames) +" from " + targetDb + " as target INNER JOIN submission as s on target.word = s.tempword";
+        return jdbcTemplate.query(sql, new SummaryRowMapper());
     }
 
     private List<Map<String, String>> createNotFoundResponse(List<String> fieldNames, String targetDb) {
@@ -74,6 +76,28 @@ public class TempTableRepository {
             if (fieldNames.contains(item.getFieldName()) ){
                 columns.append(item.getColumnName());
                 columns.append(", ");
+            }
+        }
+        columns.delete(columns.length() -2, columns.length());
+        return columns.toString();
+    }
+
+    private String createSummarySelectList(List<String> fieldNames){
+
+        StringBuilder columns = new StringBuilder();
+        for (ItemViewModelMapper item : ItemViewModelMapper.values()){
+            if (fieldNames.contains(item.getFieldName()) ){
+                String columnName = item.getColumnName();
+                switch(columnName){
+                    case "pron":
+                    case "morphsp":
+                    case "morphpr":
+                    case "pos":
+                    case "word":
+                            break;
+                    default:
+                        columns.append("AVG(" + columnName + ") as mean_" + columnName + ", " );
+                }
             }
         }
         columns.delete(columns.length() -2, columns.length());

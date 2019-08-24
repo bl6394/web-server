@@ -70,7 +70,9 @@ public class Query14Controller {
             return "query14/emailresponse";
         }
         model.addAttribute("items", query);
+        model.addAttribute("submissionCount", words.size());
         model.addAttribute("notFound", queryDTO.notFound);
+        model.addAttribute("summary", queryDTO.summary);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         addButtonFlags(model);
@@ -96,7 +98,9 @@ public class Query14Controller {
             return "query14/emailresponse";
         }
         model.addAttribute("items", query);
+        model.addAttribute("submissionCount", words.size());
         model.addAttribute("notFound", queryDTO.notFound);
+        model.addAttribute("summary", queryDTO.summary);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         addButtonFlags(model);
