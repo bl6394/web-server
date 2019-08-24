@@ -2,6 +2,7 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.domain.QueryDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +24,35 @@ public class TempTableRepository {
     }
 
     @Transactional
-    public List<Map<String, String>> get(List<String> words, List<String> fieldNames, String targetDb){
+    public QueryDTO get(List<String> words, List<String> fieldNames, String targetDb){
+        QueryDTO queryDTO = new QueryDTO();
+        createTempSubmissionTable(words);
+        queryDTO.query = createQueryResponse(fieldNames, targetDb);
+        queryDTO.summary = createSummmaryResponse(fieldNames, targetDb);
+        queryDTO.notFound = createNotFoundResponse(fieldNames, targetDb);
+        return queryDTO;
+    }
+
+    private List<Map<String, String>> createQueryResponse(List<String> fieldNames, String targetDb) {
+        String sql = "select s.occurrences as Occurrences, " + createSelectList(fieldNames) +" from " + targetDb + " as target INNER JOIN submission as s on target.word = s.tempword ORDER by s.occurrences";
+        return jdbcTemplate.query(sql, new ItemRowMapper());
+    }
+
+    private List<Map<String, String>> createSummmaryResponse(List<String> fieldNames, String targetDb) {
+        return null;
+    }
+
+    private List<Map<String, String>> createNotFoundResponse(List<String> fieldNames, String targetDb) {
+        String sql = "select s.tempword from submission as s LEFT JOIN " + targetDb + " as target  on s.tempword = target.word WHERE target.word is NULL";
+        return jdbcTemplate.query(sql, new NotFoundRowMapper());
+    }
+
+    private void createTempSubmissionTable(List<String> words) {
         jdbcTemplate.execute("drop temporary table if exists submission;");
         jdbcTemplate.execute("create temporary table submission (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword), occurrences int (11));");
         for(String word: words){
             jdbcTemplate.update("insert into submission values (?, ?) ON DUPLICATE KEY UPDATE tempword = tempword, occurrences = occurrences + 1 ;", word,1);
         }
-        String sql = "select s.occurrences as Occurrences, " + createSelectList(fieldNames) +" from " + targetDb + " as target INNER JOIN submission as s on target.word = s.tempword ORDER by s.occurrences";
-        return jdbcTemplate.query(sql, new ItemRowMapper());
     }
 
     private List<String> createColumnHeaderList(List<String> fieldNames){

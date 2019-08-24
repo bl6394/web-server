@@ -2,6 +2,7 @@ package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
+import edu.wustl.elexicon.webserver.web.domain.QueryDTO;
 import edu.wustl.elexicon.webserver.web.repository.TempTableRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,12 +53,12 @@ public class Query14Controller {
     }
 
     @PostMapping(value = "/query14/query14filedo")
-    public String processFile(@RequestParam("file") MultipartFile file,
-                              RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+    public String processFile(@RequestParam("file") MultipartFile file, Model model, HttpSession session) {
         List<String> words = parseFile(file);
         String targetDb = (String) sessionStore.get("TARGET_DB");
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
-        List<Map<String, String>> query = tempTableRepository.get(words, fields, targetDb);
+        QueryDTO queryDTO = tempTableRepository.get(words, fields, targetDb);
+        List<Map<String, String>> query = queryDTO.query;
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query14/query14.html");
@@ -71,6 +70,7 @@ public class Query14Controller {
             return "query14/emailresponse";
         }
         model.addAttribute("items", query);
+        model.addAttribute("notFound", queryDTO.notFound);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         addButtonFlags(model);
@@ -83,7 +83,8 @@ public class Query14Controller {
         List<String> words = parseString(wordlist);
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
         String targetDb = (String) sessionStore.get("TARGET_DB");
-        List<Map<String, String>> query = tempTableRepository.get(words, fields, targetDb);
+        QueryDTO queryDTO = tempTableRepository.get(words, fields, targetDb);
+        List<Map<String, String>> query = queryDTO.query;
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query14/query14.html");
@@ -95,6 +96,7 @@ public class Query14Controller {
             return "query14/emailresponse";
         }
         model.addAttribute("items", query);
+        model.addAttribute("notFound", queryDTO.notFound);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         addButtonFlags(model);
@@ -167,6 +169,5 @@ public class Query14Controller {
         }
         return words;
     }
-
 
 }

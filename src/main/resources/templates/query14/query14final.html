@@ -23,6 +23,9 @@
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
             <h4>Your query of the <span th:text="${targetDb}">Unknown</span> Lexicon returned  <span th:text="${itemCount}">0</span> Items:</h4>
+
+            <h3>Individual Item Characteristics:</h3>
+
             <table border="1">
                      <tr align="CENTER">
                         <span th:each="headers : ${items.get(0)}">
@@ -67,6 +70,27 @@
                     </tr>
                 </span>
             </table>
+
+
+
+            <span th:if="${notFound != null and !notFound.empty}">
+                <h3>Submitted List Items not found in Lexicon:</h3>
+
+                 <table border="1">
+                <tr align="CENTER">
+                        <span th:each="headers : ${notFound.get(0)}">
+                            <th th:text="${headers.key}">headers key</th>
+                        </span>
+                </tr>
+                <span th:each="row : ${notFound}">
+                    <tr align="CENTER">
+                        <span th:each="entry : ${row}">
+                            <td th:text="${entry.value}">header value</td>
+                        </span>
+                    </tr>
+                </span>
+                 </table>
+            </span>
 
             <hr>
             <div w3-include-html="/include/footer.html"></div>
