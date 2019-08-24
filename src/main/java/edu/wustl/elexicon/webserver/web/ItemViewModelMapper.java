@@ -2,6 +2,7 @@ package edu.wustl.elexicon.webserver.web;
 
 public enum ItemViewModelMapper {
 
+    OCCURRENCES("occurrences", "Occurrences", null, null),
     WORD ("word", "Word", null, null),
     LENGTH ("length", "Length", "minLength", "maxLength"),
     FREQ_KF ("freq_kf", "Freq_KF", "minFreqKF", "maxFreqKF"),

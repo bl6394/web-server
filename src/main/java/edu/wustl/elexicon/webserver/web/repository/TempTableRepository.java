@@ -24,12 +24,12 @@ public class TempTableRepository {
 
     @Transactional
     public List<Map<String, String>> get(List<String> words, List<String> fieldNames, String targetDb){
-        jdbcTemplate.execute("drop temporary table if exists bjorntable;");
-        jdbcTemplate.execute("create temporary table bjorntable (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
+        jdbcTemplate.execute("drop temporary table if exists submission;");
+        jdbcTemplate.execute("create temporary table submission (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword), occurrences int (11));");
         for(String word: words){
-            jdbcTemplate.update("insert into bjorntable values (?) ON DUPLICATE KEY UPDATE tempword = tempword;", word);
+            jdbcTemplate.update("insert into submission values (?, ?) ON DUPLICATE KEY UPDATE tempword = tempword, occurrences = occurrences + 1 ;", word,1);
         }
-        String sql = "select " + createSelectList(fieldNames) +" from " + targetDb + " as target INNER JOIN bjorntable as t on target.word = t.tempword";
+        String sql = "select s.occurrences as Occurrences, " + createSelectList(fieldNames) +" from " + targetDb + " as target INNER JOIN submission as s on target.word = s.tempword ORDER by s.occurrences";
         return jdbcTemplate.query(sql, new ItemRowMapper());
     }
 
