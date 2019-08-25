@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -71,8 +72,10 @@ public class Query18Controller {
             String uuid = UUID.randomUUID().toString();
             model.addAttribute("trxId", uuid);
             try {
-                String csv = csvWriter.writeCsv(uuid, expData);
-                mailer.sendMessage(uuid, csv, emailAddress);
+                String csv = csvWriter.writeCsv(expData);
+                Map<String, String> attachments = new HashMap<>();
+                attachments.put("Items", csv);
+                mailer.sendMessage(uuid, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
             }

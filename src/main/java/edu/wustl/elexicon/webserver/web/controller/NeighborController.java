@@ -27,7 +27,7 @@ public class NeighborController {
         String target = allRequestParams.get("target");
         String targetDb = target.equals("Restricted") ? "item" : "itemplus";
         Boolean withPron = !"neighbors".equalsIgnoreCase(type);
-        List<Map<String, String>> query = neighborRepository.get(word, type, targetDb, withPron );
+        List<Map<String, String>> query = neighborRepository.getOne(word, type, targetDb, withPron );
         model.addAttribute("items", query);
         model.addAttribute("queryEmpty", query == null || query.isEmpty() ?  "True" : "False");
         return "neighbors";

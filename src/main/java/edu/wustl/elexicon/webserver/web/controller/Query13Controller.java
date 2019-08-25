@@ -3,6 +3,7 @@ package edu.wustl.elexicon.webserver.web.controller;
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
+import edu.wustl.elexicon.webserver.web.repository.NeighborRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class Query13Controller {
@@ -30,9 +29,11 @@ public class Query13Controller {
     private final Mailer mailer;
     private final CsvWriter csvWriter;
     private final ItemRepository itemRepository;
+    private final NeighborRepository neighborRepository;
 
-    public Query13Controller(ItemRepository itemRepository, Mailer mailer, CsvWriter csvWriter) {
+    public Query13Controller(ItemRepository itemRepository, NeighborRepository neighborRepository, Mailer mailer, CsvWriter csvWriter) {
         this.itemRepository = itemRepository;
+        this.neighborRepository = neighborRepository;
         this.mailer = mailer;
         this.csvWriter = csvWriter;
     }
@@ -42,6 +43,7 @@ public class Query13Controller {
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("constraints"));
         session.setAttribute("items", query);
+        session.setAttribute("targetDb", targetDb);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("scope", formData.get("scope"));
         model.addAttribute("constraints", formData.get("constraints"));
@@ -74,13 +76,26 @@ public class Query13Controller {
             String uuid = UUID.randomUUID().toString();
             model.addAttribute("trxId", uuid);
             try {
-                String csv = csvWriter.writeCsv(uuid, items);
-                mailer.sendMessage(uuid, csv, emailAddress);
+                Map<String, String> attachments = new HashMap<>();
+                String itemsCsv = csvWriter.writeCsv(items);
+                attachments.put("Items.csv", itemsCsv);
+                List<Map<String, String>> allNeighbors = neighborRepository.getMany(convertItemsToWords(items), "neighbors", (String) session.getAttribute("targetDb"));
+                String neighborhoodCsv = csvWriter.writeCsv(allNeighbors);
+                attachments.put("Neighborhood.csv", neighborhoodCsv);
+                mailer.sendMessage(uuid, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return "query13/query13doemail";
+    }
+
+    private List<String> convertItemsToWords(List<Map<String, String>> items) {
+        List<String> words = new ArrayList<>();
+        for (Map<String,String> item: items){
+            words.add(item.get("Word"));
+        }
+        return words;
     }
 
 

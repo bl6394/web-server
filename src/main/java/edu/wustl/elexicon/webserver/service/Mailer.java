@@ -16,6 +16,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 @Service
@@ -37,19 +38,21 @@ public class Mailer {
 
 
 
-    public void sendMessage(String trxId, String csv, String email){
+    public void sendMessage(String trxId, Map<String,String> attachments, String email){
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             MimeBodyPart body = new MimeBodyPart();
             body.setText("Transaction Id " + trxId + "\n");
-            MimeBodyPart attachment = new MimeBodyPart();
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(body);
-            ByteArrayDataSource ds = new ByteArrayDataSource(csv, "text/plain");
-            attachment.setDataHandler(new DataHandler(ds));
-            attachment.setFileName("I-" + trxId + ".txt");
-            multipart.addBodyPart(attachment);
+            for (Map.Entry<String, String> attachment : attachments.entrySet()) {
+                MimeBodyPart mimeBodyPart = new MimeBodyPart();
+                ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getValue(), "text/plain");
+                mimeBodyPart.setDataHandler(new DataHandler(ds));
+                mimeBodyPart.setFileName(attachment.getKey());
+                multipart.addBodyPart(mimeBodyPart);
+            }
             mimeMessage.setContent(multipart);
         } catch (MessagingException | IOException e) {
             e.printStackTrace();

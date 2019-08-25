@@ -13,7 +13,7 @@ import java.util.Map;
 @Service
 public class CsvWriter {
 
-    public String writeCsv(String name, List<Map<String, String>> items) throws IOException {
+    public String writeCsv(List<Map<String, String>> items) throws IOException {
         StringWriter sw = new StringWriter();
         String [] headers = items.get(0).keySet().toArray(new String[items.get(0).size()]);
         try (CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL)

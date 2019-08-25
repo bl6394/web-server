@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,8 +20,9 @@ import java.util.Map;
 @Service
 public class NeighborRepository {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static final DecimalFormat DF0 = new DecimalFormat("#,###");
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private JdbcTemplate jdbcTemplate;
 
@@ -28,7 +30,38 @@ public class NeighborRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, String>> get(String word, String type, String targetDb, Boolean withPron) {
+    public List<Map<String, String>> getOne(String word, String type, String targetDb, Boolean withPron) {
+        String targetNeighborDb = setTargetNeighborDbName(type, targetDb);
+        String sql =  (withPron ? "SELECT word, pron, freq_hal from " : "SELECT word, freq_hal from ")  + targetDb + " where wid in (Select n_wid from " + targetNeighborDb + " where wid in (select wid from " + targetDb + " where word = ?) ) order by freq_hal";
+        NeighborRowCallbackHandler neighborRowCallbackHandler = new NeighborRowCallbackHandler(withPron);
+        jdbcTemplate.query(sql, new PreparedStatementSetter() {
+            public void setValues(PreparedStatement preparedStatement) throws
+                    SQLException {
+                preparedStatement.setString(1, word);
+            }
+        }, neighborRowCallbackHandler);
+        return neighborRowCallbackHandler.getNeighborList();
+    }
+
+    @Transactional
+    public List<Map<String, String>> getMany(List<String> words, String type, String targetDb) {
+        createTempSubmissionTable(words);
+        String targetNeighborDb = setTargetNeighborDbName(type, targetDb);
+        String sql =  "SELECT (SELECT word FROM " + targetDb + " WHERE " + targetNeighborDb + ".wid = " + targetDb + ".wid) as word, (SELECT word FROM " + targetDb + " WHERE " + targetNeighborDb + ".n_wid = " + targetDb + ".wid) AS orthographic_neighbor FROM " + targetNeighborDb + " WHERE wid in (SELECT wid FROM " + targetDb + " WHERE word IN (SELECT tempword as word from submission ) ) order by word";
+        AllNeighborsRowCallbackHandler allNeighborsRowCallbackHandler = new AllNeighborsRowCallbackHandler();
+        jdbcTemplate.query(sql, allNeighborsRowCallbackHandler);
+        return allNeighborsRowCallbackHandler.getNeighborList();
+    }
+
+    private void createTempSubmissionTable(List<String> words) {
+        jdbcTemplate.execute("drop temporary table if exists submission;");
+        jdbcTemplate.execute("create temporary table submission (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
+        for(String word: words){
+            jdbcTemplate.update("insert into submission values (?) ON DUPLICATE KEY UPDATE tempword = tempword;", word);
+        }
+    }
+
+    private String setTargetNeighborDbName(String type, String targetDb) {
         String targetNeighborDb;
         switch (type) {
             case "neighbors":
@@ -49,15 +82,7 @@ public class NeighborRepository {
             default:
                 throw new IllegalArgumentException("invalid parameter");
         }
-        String sql =  (withPron ? "SELECT word, pron, freq_hal from " : "SELECT word, freq_hal from ")  + targetDb + " where wid in (Select n_wid from " + targetNeighborDb + " where wid in (select wid from " + targetDb + " where word = ?) ) order by freq_hal";
-        NeighborRowCallbackHandler neighborRowCallbackHandler = new NeighborRowCallbackHandler(withPron);
-        jdbcTemplate.query(sql, new PreparedStatementSetter() {
-            public void setValues(PreparedStatement preparedStatement) throws
-                    SQLException {
-                preparedStatement.setString(1, word);
-            }
-        }, neighborRowCallbackHandler);
-        return neighborRowCallbackHandler.getNeighborList();
+        return targetNeighborDb;
     }
 
     class NeighborRowCallbackHandler implements RowCallbackHandler {
@@ -78,6 +103,27 @@ public class NeighborRepository {
             }
             int freqHal = rs.getInt("freq_hal");
             map.put("Freq_Hal", DF0.format(freqHal));
+            aList.add(map);
+        }
+
+        private List<Map<String, String>> getNeighborList() {
+            return aList;
+        }
+    }
+
+    class AllNeighborsRowCallbackHandler implements RowCallbackHandler {
+        private List<Map<String, String>> aList;
+
+        public AllNeighborsRowCallbackHandler() {
+            aList = new ArrayList<Map<String, String>>();
+        }
+
+        public void processRow(ResultSet rs) throws SQLException {
+            Map<String, String> map = new HashMap<>();
+            String word = rs.getString("word");
+            map.put("Word", word);
+            String neighbor = rs.getString("orthographic_neighbor");
+            map.put("Orthographic_Neighbor ", neighbor);
             aList.add(map);
         }
 

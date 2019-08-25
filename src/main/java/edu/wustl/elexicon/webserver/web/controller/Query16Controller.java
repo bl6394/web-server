@@ -20,10 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class Query16Controller {
@@ -107,8 +104,10 @@ public class Query16Controller {
             String uuid = UUID.randomUUID().toString();
             model.addAttribute("trxId", uuid);
             try {
-                String csv = csvWriter.writeCsv(uuid, items);
-                mailer.sendMessage(uuid, csv, emailAddress);
+                String csv = csvWriter.writeCsv(items);
+                Map<String, String> attachments = new HashMap<>();
+                attachments.put("Items", csv);
+                mailer.sendMessage(uuid, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
             }
