@@ -50,7 +50,20 @@ public enum ItemViewModelMapper {
     I_NMG_ZSCORE ("i_nmg_zscore", "I_NMG_Zscore","minINmgZScore", "maxINmgZScore"),
     I_NMG_SD ("i_nmg_sd", "I_NMG_SD","minINmgSD", "maxINmgSD"),
     I_NMG_OBS ("i_nmg_obs", "I_NMG_Obs","minINmgObs", "maxINmgObs"),
-    I_NMG_MEAN_ACCURACY ("i_nmg_mean_accuracy", "I_NMG_Mean_Accuracy", "minINmgMeanAccuracy", "maxINmgMeanAccuracy");
+    I_NMG_MEAN_ACCURACY ("i_nmg_mean_accuracy", "I_NMG_Mean_Accuracy", "minINmgMeanAccuracy", "maxINmgMeanAccuracy"),
+    CR ("cr", "CR","minCR", "maxCR"),
+    ARC ("arc", "ARC","minARC", "maxARC"),
+    SN ("sn", "SN","minSN", "maxSN"),
+    SD ("sd", "SD","minSD", "maxSD"),
+    AOA ("aoa", "AOA","minAOA", "maxAOA"),
+    BOI ("boi", "boi","minBOI", "maxBOI"),
+    EV ("ev", "EV","minEV", "maxEV"),
+    EA ("ea", "EA","minEA", "maxEA"),
+    ED ("ed", "ED","minED", "maxED"),
+    ASSOC_FREQ_R1 ("assocfreqr1", "Assoc_Freq_R1","minAssocFreqR1", "maxAssocFreqR1"),
+    ASSOC_TYPES_R1 ("assoctypesr1", "Assoc_Types_R1","minAssocTypesR1", "maxAssocTypesR1"),
+    ASSOC_FREQ_R123 ("assocfreqr123", "Assoc_Freq_R123","minAssocFreqR123", "maxAssocFreqR123"),
+    ASSOC_TYPES_R123 ("assoctypesr123", "Assoc_Types_R123","minAssocTypesR123", "maxAssocTypesR123");
 
 
 
