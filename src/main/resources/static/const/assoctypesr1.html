@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minAssoc_Types_R1 ) {
+                    document.getElementById("minAssoc_Types_R1InputField").value = constraints.minAssocTypesR1;
+                }
+                if (constraints.maxAssoc_Types_R1) {
+                    document.getElementById("maxAssoc_Types_R1InputField").value = constraints.maxAssocTypesR1;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minAssoc_Types_R1InputField").value) {
+                constraints.minAssocTypesR1 = document.getElementById("minAssoc_Types_R1InputField").value;
+            } else {
+                delete constraints.minAssocTypesR1;
+            }
+            if (document.getElementById("maxAssoc_Types_R1InputField").value) {
+                constraints.maxAssocTypesR1 = document.getElementById("maxAssoc_Types_R1InputField").value;
+            } else {
+                delete constraints.maxAssocTypesR1;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on Assoc_Types_R1</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Assoc_Types_R1 or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>Assoc_Types_R1</TD>
+            <TD><INPUT ID="minAssoc_Types_R1InputField" TYPE=TEXT NAME="minAssoc_Types_R1"></TD>
+            <TD><INPUT ID="maxAssoc_Types_R1InputField" TYPE=TEXT NAME="maxAssoc_Types_R1">
+        </TR>
+    </table>
+    <BR>
+    <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

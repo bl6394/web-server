@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/include/styles.css">
+    <script>
+        var constraints;
+        var CONSTRAINT_KEY = "CONSTRAINTS";
+        function init() {
+            if (typeof(Storage) !== "undefined") {
+                constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+                if (constraints == undefined){
+                    constraints = {};
+                }
+                if (constraints.minSN ) {
+                    document.getElementById("minSNInputField").value = constraints.minSN;
+                }
+                if (constraints.maxSN) {
+                    document.getElementById("maxSNInputField").value = constraints.maxSN;
+                }
+            } else {
+                document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function save() {
+            constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+            if (constraints == undefined){
+                constraints = {};
+            }
+            if (document.getElementById("minSNInputField").value) {
+                constraints.minSN = document.getElementById("minSNInputField").value;
+            } else {
+                delete constraints.minSN;
+            }
+            if (document.getElementById("maxSNInputField").value) {
+                constraints.maxSN = document.getElementById("maxSNInputField").value;
+            } else {
+                delete constraints.maxSN;
+            }
+            localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+            self.close();
+        }
+    </script>
+    <title>Constraints on SN</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the SN or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+    <table border="0">
+        <tr>
+            <th align="left">Attribute</th>
+            <th align="left">Minimum Value</th>
+            <th align="left">Maximum Value</th>
+        </tr>
+        <TR ALIGN=LEFT>
+            <TD>SN</TD>
+            <TD><INPUT ID="minSNInputField" TYPE=TEXT NAME="minSN"></TD>
+            <TD><INPUT ID="maxSNInputField" TYPE=TEXT NAME="maxSN">
+        </TR>
+    </table>
+    <BR>
+    <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
