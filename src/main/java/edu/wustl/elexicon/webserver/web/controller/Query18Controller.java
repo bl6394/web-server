@@ -74,7 +74,7 @@ public class Query18Controller {
             try {
                 String csv = csvWriter.writeCsv(expData);
                 Map<String, String> attachments = new HashMap<>();
-                attachments.put("Items", csv);
+                attachments.put("NamingData.csv", csv);
                 mailer.sendMessage(uuid, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();

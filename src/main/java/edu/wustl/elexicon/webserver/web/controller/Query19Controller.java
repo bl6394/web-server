@@ -105,7 +105,7 @@ public class Query19Controller {
             try {
                 String csv = csvWriter.writeCsv(items);
                 Map<String, String> attachments = new HashMap<>();
-                attachments.put("Items", csv);
+                attachments.put("NonWord.csv", csv);
                 mailer.sendMessage(uuid, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();

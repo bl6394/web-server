@@ -62,6 +62,7 @@ public class Query14Controller {
             return "errorback";
         }
         session.setAttribute("items", query);
+        session.setAttribute("summary", queryDTO.summary);
         List<String> distubution = (List<String>) sessionStore.get("DISTRIBUTION");
         if (query.size() > maxHtmlResultSet || distubution.contains("email") ) {
             return "query14/emailresponse";
@@ -90,6 +91,7 @@ public class Query14Controller {
             return "errorback";
         }
         session.setAttribute("items", query);
+        session.setAttribute("summary", queryDTO.summary);
         List<String> distubution = (List<String>) sessionStore.get("DISTRIBUTION");
         if (query.size() > maxHtmlResultSet || distubution.contains("email") ) {
             return "query14/emailresponse";
@@ -119,7 +121,9 @@ public class Query14Controller {
             try {
                 String csv = csvWriter.writeCsv(items);
                 Map<String, String> attachments = new HashMap<>();
-                attachments.put("Items", csv);
+                attachments.put("Items.csv", csv);
+                String summary = csvWriter.writeCsv( (List<Map<String, String>>) session.getAttribute("items"));
+                attachments.put("Summary.csv", csv);
                 mailer.sendMessage(uuid, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
