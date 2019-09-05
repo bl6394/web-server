@@ -2,6 +2,9 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.controller.Query13Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,8 @@ import java.util.Map;
 @Service
 public class ItemRepository {
 
+    private final Logger log = LoggerFactory.getLogger(ItemRepository.class);
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private JdbcTemplate jdbcTemplate;
@@ -22,8 +27,9 @@ public class ItemRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, String>> get(List<String> fieldNames, String targetDb, List<String> criteria){
+    public List<Map<String, String>> get(String trxId, List<String> fieldNames, String targetDb, List<String> criteria){
         String sql = "select " + createSelectList(fieldNames) +" from " + targetDb + createCriteriaExpression(criteria);
+        log.info("Session Id: " + trxId + " Database Query 13: " + sql );
         return jdbcTemplate.query(sql, new ItemRowMapper());
     }
 

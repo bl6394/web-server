@@ -44,7 +44,8 @@ public class Query13Controller {
         session.setAttribute("TRX_ID", trxId);
         log.info("Session Id: " + trxId + " Starting Query 13" );
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("constraints"));
+        List<Map<String, String>> query = itemRepository.get(trxId, formData.get("field"), targetDb, formData.get("constraints"));
+        log.info("Session Id: " + trxId + " Query 13 Size: " + query.size() );
         session.setAttribute("items", query);
         session.setAttribute("targetDb", targetDb);
         model.addAttribute("dist", formData.get("dist"));
@@ -68,15 +69,17 @@ public class Query13Controller {
 
     @PostMapping(value = "/query13/query13domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Processing Query 13" );
         String emailAddress = formData.getFirst("address");
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query13/emailresponse";
         }
+        log.info("Session Id: " + trxId + " Query 13 Email: " + emailAddress );
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
         if (items != null) {
-            String trxId = (String) session.getAttribute("TRX_ID");
             model.addAttribute("trxId", trxId);
             try {
                 Map<String, String> attachments = new HashMap<>();
@@ -90,6 +93,7 @@ public class Query13Controller {
                 log.error("error",  e);
             }
         }
+        log.info("Session Id: " + trxId + " Finished Query 13" );
         return "query13/query13doemail";
     }
 
