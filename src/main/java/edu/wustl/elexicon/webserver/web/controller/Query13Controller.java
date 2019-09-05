@@ -40,6 +40,9 @@ public class Query13Controller {
 
     @PostMapping(value = "/query13/query13do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = UUID.randomUUID().toString();
+        session.setAttribute("TRX_ID", trxId);
+        log.info("Session Id: " + trxId + " Starting Query 13" );
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<Map<String, String>> query = itemRepository.get(formData.get("field"), targetDb, formData.get("constraints"));
         session.setAttribute("items", query);
@@ -73,8 +76,8 @@ public class Query13Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
         if (items != null) {
-            String uuid = UUID.randomUUID().toString();
-            model.addAttribute("trxId", uuid);
+            String trxId = (String) session.getAttribute("TRX_ID");
+            model.addAttribute("trxId", trxId);
             try {
                 Map<String, String> attachments = new HashMap<>();
                 String itemsCsv = csvWriter.writeCsv(items);
@@ -82,9 +85,9 @@ public class Query13Controller {
                 List<Map<String, String>> allNeighbors = neighborRepository.getMany(convertItemsToWords(items), "neighbors", (String) session.getAttribute("targetDb"));
                 String neighborhoodCsv = csvWriter.writeCsv(allNeighbors);
                 attachments.put("Neighborhood.csv", neighborhoodCsv);
-                mailer.sendMessage(uuid, attachments, emailAddress);
+                mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("error",  e);
             }
         }
         return "query13/query13doemail";

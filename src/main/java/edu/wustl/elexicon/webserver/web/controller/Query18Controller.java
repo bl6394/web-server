@@ -40,6 +40,9 @@ public class Query18Controller {
 
     @PostMapping(value = "/query18/query18do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = UUID.randomUUID().toString();
+        session.setAttribute("TRX_ID", trxId);
+        log.info("Session Id: " + trxId + " Starting Query 18" );
         List<Map<String, String>> query = namingDataRepository.get(formData.get("field"), formData.get("constraints"));
         session.setAttribute("expData1", query);
         model.addAttribute("dist", formData.get("dist"));
@@ -69,13 +72,13 @@ public class Query18Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("expData1");
         if (expData != null) {
-            String uuid = UUID.randomUUID().toString();
-            model.addAttribute("trxId", uuid);
+            String trxId = (String) session.getAttribute("TRX_ID");
+            model.addAttribute("trxId", trxId);
             try {
                 String csv = csvWriter.writeCsv(expData);
                 Map<String, String> attachments = new HashMap<>();
                 attachments.put("NamingData.csv", csv);
-                mailer.sendMessage(uuid, attachments, emailAddress);
+                mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
             }

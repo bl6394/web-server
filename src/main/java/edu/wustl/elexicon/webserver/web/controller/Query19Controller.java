@@ -3,6 +3,8 @@ package edu.wustl.elexicon.webserver.web.controller;
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
 import edu.wustl.elexicon.webserver.web.repository.TempNonWordTableRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,8 @@ import java.util.*;
 @Controller
 public class Query19Controller {
 
+    private final Logger log = LoggerFactory.getLogger(Query19Controller.class);
+
     @Value("${maxquerysize}")
     private Integer maxHtmlResultSet;
 
@@ -39,6 +43,9 @@ public class Query19Controller {
 
     @PostMapping(value = "/query19/query19do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = UUID.randomUUID().toString();
+        session.setAttribute("TRX_ID", trxId);
+        log.info("Session Id: " + trxId + " Starting Query 18" );
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
         List<String> distubution = formData.get("dist");
         session.setAttribute("FIELDS", fields);
@@ -100,13 +107,13 @@ public class Query19Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("nwItems");
         if (items != null) {
-            String uuid = UUID.randomUUID().toString();
-            model.addAttribute("trxId", uuid);
+            String trxId = (String) session.getAttribute("TRX_ID");
+            model.addAttribute("trxId", trxId);
             try {
                 String csv = csvWriter.writeCsv(items);
                 Map<String, String> attachments = new HashMap<>();
                 attachments.put("NonWord.csv", csv);
-                mailer.sendMessage(uuid, attachments, emailAddress);
+                mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
                 e.printStackTrace();
             }

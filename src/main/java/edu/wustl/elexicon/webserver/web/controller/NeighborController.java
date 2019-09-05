@@ -1,6 +1,8 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.web.repository.NeighborRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,8 @@ import java.util.Map;
 
 @Controller
 public class NeighborController {
+
+    private final Logger log = LoggerFactory.getLogger(NeighborController.class);
 
     private NeighborRepository neighborRepository;
 
