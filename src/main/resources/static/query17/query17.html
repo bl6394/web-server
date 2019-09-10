@@ -12,7 +12,7 @@
             var constraintsJson=localStorage.getItem('CONSTRAINTS');
             if (!constraintsJson)
                 constraintsJson='{}';
-            $('#form').append('<input type="hidden" name="constraints" value=' + constraintsJson + ' />');
+            $('#form').append('<input type="hidden" name="constraints" value=' + constraintsJson + ' autocomplete="off" />');
             $('#form').submit();
             return true;
         }
@@ -36,7 +36,7 @@
             <h2>Access Lexical Decision Data</h2>
             <p>The following query allows one to display Lexical Decision data collected to date.
                 You will enter any desired contraints, and all data meeting those criteria will be returned.</p>
-            <form id="form" action="/query17/query17do" method="POST" name="query17">
+            <form id="form" action="/query17/query17do" method="POST" name="query17" autocomplete="off">
                 <hr>
                 <h2>Please select the fields and any constraints to be used in the query:</h2>
 
