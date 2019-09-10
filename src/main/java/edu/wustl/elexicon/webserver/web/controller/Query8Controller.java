@@ -42,8 +42,9 @@ public class Query8Controller {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting Query 8" );
-        List<Map<String, String>> query = nonWordItemRepository.get(formData.get("field"), formData.get("constraints"));
+        log.info("Session Id: " + trxId + " Starting" );
+        List<Map<String, String>> query = nonWordItemRepository.get(trxId, formData.get("field"), formData.get("constraints"));
+        log.info("Session Id: " + trxId + " QuerySize: " +  query.size() );
         session.setAttribute("nwItemData", query);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("constraints", formData.get("constraints"));
@@ -64,7 +65,10 @@ public class Query8Controller {
 
     @PostMapping(value = "/query8/query8domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process Email" );
         String emailAddress = formData.getFirst("address");
+        log.info("Session Id: " + trxId + " Email: " + emailAddress );
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query8/emailresponse";
@@ -72,7 +76,6 @@ public class Query8Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("nwItemData");
         if (expData != null) {
-            String trxId = (String) session.getAttribute("TRX_ID");
             model.addAttribute("trxId", trxId);
             try {
                 String csv = csvWriter.writeCsv(expData);
@@ -80,7 +83,7 @@ public class Query8Controller {
                 attachments.put("NonWord.csv", csv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("error",  e);
             }
         }
         return "query8/query8doemail";

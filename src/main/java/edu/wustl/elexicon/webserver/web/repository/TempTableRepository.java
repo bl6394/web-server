@@ -2,7 +2,10 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.controller.Query14Controller;
 import edu.wustl.elexicon.webserver.web.domain.QueryDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,8 @@ import java.util.Map;
 @Service
 public class TempTableRepository {
 
+    private final Logger log = LoggerFactory.getLogger(TempTableRepository.class);
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private JdbcTemplate jdbcTemplate;
@@ -24,17 +29,18 @@ public class TempTableRepository {
     }
 
     @Transactional
-    public QueryDTO get(List<String> words, List<String> fieldNames, String targetDb){
+    public QueryDTO get(String trxId, List<String> words, List<String> fieldNames, String targetDb){
         QueryDTO queryDTO = new QueryDTO();
         createTempSubmissionTable(words);
-        queryDTO.query = createQueryResponse(fieldNames, targetDb);
+        queryDTO.query = createQueryResponse(trxId,  fieldNames, targetDb);
         queryDTO.summary = createSummmaryResponse(fieldNames, targetDb);
         queryDTO.notFound = createNotFoundResponse(fieldNames, targetDb);
         return queryDTO;
     }
 
-    private List<Map<String, String>> createQueryResponse(List<String> fieldNames, String targetDb) {
+    private List<Map<String, String>> createQueryResponse(String  trxId, List<String> fieldNames, String targetDb) {
         String sql = "select s.occurrences as Occurrences, " + createSelectList(fieldNames) +" from " + targetDb + " as target INNER JOIN submission as s on target.word = s.tempword ORDER by s.occurrences";
+        log.info("Session Id: " + trxId + "SQL: " + sql);
         return jdbcTemplate.query(sql, new ItemRowMapper());
     }
 
@@ -130,6 +136,7 @@ public class TempTableRepository {
             return result.equals(" WHERE ") ? "" : result;
         }
         catch (Exception e){
+            log.info("error" , e);
             return "";
         }
     }
@@ -143,6 +150,7 @@ public class TempTableRepository {
                 String json = constraints.get(0);
                 return mapper.readValue(json, HashMap.class);
             } catch (Exception e) {
+                log.info("error" , e);
                 return map;
             }
         }

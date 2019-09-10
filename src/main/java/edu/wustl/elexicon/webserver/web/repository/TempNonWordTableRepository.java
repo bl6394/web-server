@@ -2,6 +2,8 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.NonWordItemViewModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 @Service
 public class TempNonWordTableRepository {
+    private final Logger log = LoggerFactory.getLogger(TempNonWordTableRepository.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -23,13 +26,14 @@ public class TempNonWordTableRepository {
     }
 
     @Transactional
-    public List<Map<String, String>> get(List<String> words, List<String> fieldNames){
+    public List<Map<String, String>> get(String trxId, List<String> words, List<String> fieldNames){
         jdbcTemplate.execute("drop temporary table if exists bjorntable;");
         jdbcTemplate.execute("create temporary table bjorntable (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
         for(String word: words){
             jdbcTemplate.update("insert into bjorntable values (?) ON DUPLICATE KEY UPDATE tempword = tempword;", word);
         }
         String sql = "select " + createSelectList(fieldNames) +" from nw_item  as target INNER JOIN bjorntable as t on target.word = t.tempword";
+        log.info("Session Id: " + trxId + " SQL: " + sql );
         return jdbcTemplate.query(sql, new NonWordItemRowMapper());
     }
 
@@ -84,6 +88,7 @@ public class TempNonWordTableRepository {
             return result.equals(" WHERE ") ? "" : result;
         }
         catch (Exception e){
+            log.error("error", e);
             return "";
         }
     }
@@ -97,6 +102,7 @@ public class TempNonWordTableRepository {
                 String json = constraints.get(0);
                 return mapper.readValue(json, HashMap.class);
             } catch (Exception e) {
+                log.error("error", e);
                 return map;
             }
         }

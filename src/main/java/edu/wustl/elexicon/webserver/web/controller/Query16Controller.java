@@ -46,7 +46,7 @@ public class Query16Controller {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting Query 16" );
+        log.info("Session Id: " + trxId + " Starting" );
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
         List<String> distubution = formData.get("dist");
         session.setAttribute("FIELDS", fields);
@@ -57,9 +57,13 @@ public class Query16Controller {
     @PostMapping(value = "/query16/query16filedo")
     public String processFile(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process File" );
         List<String> words = parseFile(file);
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         List<String> fields = (List<String>) session.getAttribute("FIELDS");
-        List<Map<String, String>> query = tempNonWordTableRepository.get(words, fields);
+        List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query16/query16.html");
@@ -78,10 +82,14 @@ public class Query16Controller {
 
     @PostMapping(value = "/query16/query16listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processList(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process List" );
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         List<String> fields = (List<String>) session.getAttribute("FIELDS");
-        List<Map<String, String>> query = tempNonWordTableRepository.get(words, fields);
+        List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query16/query16.html");
@@ -100,7 +108,10 @@ public class Query16Controller {
 
     @PostMapping(value = "/query16/query16domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Processing Email" );
         String emailAddress = formData.getFirst("address");
+        log.info("Session Id: " + trxId + " Email: " + emailAddress );
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query16/emailresponse";
@@ -108,7 +119,6 @@ public class Query16Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("nwItems");
         if (items != null) {
-            String trxId = (String) session.getAttribute("TRX_ID");
             model.addAttribute("trxId", trxId);
             try {
                 String csv = csvWriter.writeCsv(items);
@@ -116,7 +126,7 @@ public class Query16Controller {
                 attachments.put("NonWord.csv", csv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("error",  e);
             }
         }
         return "query16/query16doemail";
@@ -145,7 +155,7 @@ public class Query16Controller {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error",  e);
         }
         return words;
     }

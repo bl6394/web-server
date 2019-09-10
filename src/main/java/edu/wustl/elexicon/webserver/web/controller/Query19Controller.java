@@ -56,9 +56,13 @@ public class Query19Controller {
     @PostMapping(value = "/query19/query19filedo")
     public String processFile(@RequestParam("file") MultipartFile file,
                               RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process File" );
         List<String> words = parseFile(file);
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         List<String> fields = (List<String>) session.getAttribute("FIELDS");
-        List<Map<String, String>> query = tempNonWordTableRepository.get(words, fields);
+        List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query19/query19.html");
@@ -77,10 +81,14 @@ public class Query19Controller {
 
     @PostMapping(value = "/query19/query19listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processList(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process List" );
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         List<String> fields = (List<String>) session.getAttribute("FIELDS");
-        List<Map<String, String>> query = tempNonWordTableRepository.get(words, fields);
+        List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query19/query19.html");
@@ -99,7 +107,10 @@ public class Query19Controller {
 
     @PostMapping(value = "/query19/query19domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Processing email" );
         String emailAddress = formData.getFirst("address");
+        log.info("Session Id: " + trxId + " Email: " + emailAddress );
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query19/emailresponse";
@@ -107,7 +118,6 @@ public class Query19Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("nwItems");
         if (items != null) {
-            String trxId = (String) session.getAttribute("TRX_ID");
             model.addAttribute("trxId", trxId);
             try {
                 String csv = csvWriter.writeCsv(items);
@@ -115,7 +125,7 @@ public class Query19Controller {
                 attachments.put("NonWord.csv", csv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("error: ", e);
             }
         }
         return "query19/query19doemail";
@@ -144,7 +154,7 @@ public class Query19Controller {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error: ", e);
         }
         return words;
     }

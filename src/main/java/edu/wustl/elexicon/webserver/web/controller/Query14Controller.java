@@ -46,7 +46,7 @@ public class Query14Controller {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting Query 14" );
+        log.info("Session Id: " + trxId + " Starting" );
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
         List<String> distubution = formData.get("dist");
@@ -58,11 +58,15 @@ public class Query14Controller {
 
     @PostMapping(value = "/query14/query14filedo")
     public String processFile(@RequestParam("file") MultipartFile file, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process File" );
         List<String> words = parseFile(file);
         String targetDb = (String) sessionStore.get("TARGET_DB");
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
-        QueryDTO queryDTO = tempTableRepository.get(words, fields, targetDb);
+        log.info("Session Id: " + trxId + " WordsSize: ", words.size() );
+        QueryDTO queryDTO = tempTableRepository.get(trxId, words, fields, targetDb);
         List<Map<String, String>> query = queryDTO.query;
+        log.info("Session Id: " + trxId + " QuerySize: ", query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query14/query14.html");
@@ -86,12 +90,16 @@ public class Query14Controller {
 
     @PostMapping(value = "/query14/query14listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processList(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Process List" );
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
+        log.info("Session Id: " + trxId + " WordsSize: ", words.size() );
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
         String targetDb = (String) sessionStore.get("TARGET_DB");
-        QueryDTO queryDTO = tempTableRepository.get(words, fields, targetDb);
+        QueryDTO queryDTO = tempTableRepository.get(trxId, words, fields, targetDb);
         List<Map<String, String>> query = queryDTO.query;
+        log.info("Session Id: " + trxId + " QuerySize: ", query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query14/query14.html");
@@ -115,7 +123,10 @@ public class Query14Controller {
 
     @PostMapping(value = "/query14/query14domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
+        String trxId = (String) session.getAttribute("TRX_ID");
+        log.info("Session Id: " + trxId + " Processing Email" );
         String emailAddress = formData.getFirst("address");
+        log.info("Session Id: " + trxId + " Email: " + emailAddress );
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query14/emailresponse";
@@ -123,7 +134,6 @@ public class Query14Controller {
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
         if (items != null) {
-            String trxId = (String) session.getAttribute("TRX_ID");
             model.addAttribute("trxId", trxId);
             try {
                 String csv = csvWriter.writeCsv(items);
@@ -133,7 +143,7 @@ public class Query14Controller {
                 attachments.put("Summary.csv", csv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("error",  e);
             }
         }
         return "query14/query14doemail";
@@ -166,7 +176,7 @@ public class Query14Controller {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error",  e);
         }
         return words;
     }

@@ -124,3 +124,12 @@ function toggleOffAllCheckboxes(source) {
     }
 }
 
+function displayConstraints(source) {
+    var constraintsJson=localStorage.getItem('CONSTRAINTS');
+    if (!constraintsJson) {
+        constraintsJson = '{}';
+    }
+    alert("Constraints: " + constraintsJson );
+}
+
+

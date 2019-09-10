@@ -42,10 +42,10 @@ public class Query13Controller {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting Query 13" );
+        log.info("Session Id: " + trxId + " Starting" );
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<Map<String, String>> query = itemRepository.get(trxId, formData.get("field"), targetDb, formData.get("constraints"));
-        log.info("Session Id: " + trxId + " Query 13 Size: " + query.size() );
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         session.setAttribute("items", query);
         session.setAttribute("targetDb", targetDb);
         model.addAttribute("dist", formData.get("dist"));
@@ -70,13 +70,13 @@ public class Query13Controller {
     @PostMapping(value = "/query13/query13domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = (String) session.getAttribute("TRX_ID");
-        log.info("Session Id: " + trxId + " Processing Query 13" );
+        log.info("Session Id: " + trxId + " Processing Email" );
         String emailAddress = formData.getFirst("address");
+        log.info("Session Id: " + trxId + " Email: " + emailAddress );
         if (emailAddress.isEmpty()) {
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query13/emailresponse";
         }
-        log.info("Session Id: " + trxId + " Query 13 Email: " + emailAddress );
         model.addAttribute("emailAddress", emailAddress);
         final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
         if (items != null) {

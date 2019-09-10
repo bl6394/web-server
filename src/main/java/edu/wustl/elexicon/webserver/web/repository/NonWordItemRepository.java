@@ -2,6 +2,9 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.NonWordItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.controller.Query14Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,7 @@ import java.util.Map;
 
 @Service
 public class NonWordItemRepository {
+    private final Logger log = LoggerFactory.getLogger(NonWordItemRepository.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -21,8 +25,9 @@ public class NonWordItemRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, String>> get(List<String> fieldNames, List<String> criteria){
+    public List<Map<String, String>> get(String trxId, List<String> fieldNames, List<String> criteria){
         String sql = "select " + createSelectList(fieldNames) +" from nw_item " + createCriteriaExpression(criteria);
+        log.info("Session Id: " + trxId + " SQL: " + sql);
         return jdbcTemplate.query(sql, new NonWordItemRowMapper());
     }
 
@@ -77,6 +82,7 @@ public class NonWordItemRepository {
             return result.equals(" WHERE ") ? "" : result;
         }
         catch (Exception e){
+            log.error("error", e);
             return "";
         }
     }
@@ -90,6 +96,7 @@ public class NonWordItemRepository {
                 String json = constraints.get(0);
                 return mapper.readValue(json, HashMap.class);
             } catch (Exception e) {
+                log.error("error", e);
                 return map;
             }
         }
