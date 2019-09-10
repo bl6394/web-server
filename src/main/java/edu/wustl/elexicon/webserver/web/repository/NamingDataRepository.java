@@ -31,6 +31,12 @@ public class NamingDataRepository {
         return jdbcTemplate.query(sql, new NamingDataRowMapper());
     }
 
+    public int getSize(String trxId, List<String> fieldNames, List<String> criteria){
+        String sql = "select count(*)from exp_data1 " + createCriteriaExpression(criteria);
+        log.info("Session Id: " + trxId + " SQL: " + sql);
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
     List<String> createColumnHeaderList(List<String> fieldNames){
         List<String> columnHeaders = new ArrayList<>();
         for (NamingDataViewModelMapper expData : NamingDataViewModelMapper.values()){

@@ -43,6 +43,12 @@ public class Query18Controller {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
         log.info("Session Id: " + trxId + " Starting" );
+        int querySize = namingDataRepository.getSize(trxId,  formData.get("field"), formData.get("constraints"));
+        if ( querySize >= 100000){
+            model.addAttribute("errorMessage", "You query generated " + querySize + " results!  Please add constraints...");
+            model.addAttribute("errorBackLink", "/query18/query18.html");
+            return "errorback";
+        }
         List<Map<String, String>> query = namingDataRepository.get(trxId,  formData.get("field"), formData.get("constraints"));
         log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         session.setAttribute("expData1", query);

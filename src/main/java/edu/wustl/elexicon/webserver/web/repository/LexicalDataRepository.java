@@ -31,6 +31,12 @@ public class LexicalDataRepository {
         return jdbcTemplate.query(sql, new LexicalDataRowMapper());
     }
 
+    public int getSize(String  trxId, List<String> fieldNames, List<String> criteria){
+        String sql = "select count(*) from exp_data " + createCriteriaExpression(criteria);
+        log.info("Session Id: " + trxId + " SQL: " + sql);
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
     List<String> createColumnHeaderList(List<String> fieldNames){
         List<String> columnHeaders = new ArrayList<>();
         for (LexicalDataViewModelMapper expData : LexicalDataViewModelMapper.values()){

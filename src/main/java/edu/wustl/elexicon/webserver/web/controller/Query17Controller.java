@@ -43,6 +43,13 @@ public class Query17Controller {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
         log.info("Session Id: " + trxId + " Starting" );
+        int querySize = lexicalDataRepository.getSize(trxId, formData.get("field"), formData.get("constraints"));
+        log.info("Session Id: " + trxId + " Pre Size Check: " + querySize);
+        if ( querySize >= 100000){
+            model.addAttribute("errorMessage", "You query generated " + querySize + " results!  Please add constraints...");
+            model.addAttribute("errorBackLink", "/query17/query17.html");
+            return "errorback";
+        }
         List<Map<String, String>> query = lexicalDataRepository.get(trxId, formData.get("field"), formData.get("constraints"));
         log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         session.setAttribute("expData", query);
