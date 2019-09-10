@@ -63,10 +63,10 @@ public class Query14Controller {
         List<String> words = parseFile(file);
         String targetDb = (String) sessionStore.get("TARGET_DB");
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
-        log.info("Session Id: " + trxId + " WordsSize: ", words.size() );
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         QueryDTO queryDTO = tempTableRepository.get(trxId, words, fields, targetDb);
         List<Map<String, String>> query = queryDTO.query;
-        log.info("Session Id: " + trxId + " QuerySize: ", query.size() );
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query14/query14.html");
@@ -94,12 +94,12 @@ public class Query14Controller {
         log.info("Session Id: " + trxId + " Process List" );
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
-        log.info("Session Id: " + trxId + " WordsSize: ", words.size() );
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         List<String> fields = (List<String>) sessionStore.get("FIELDS");
         String targetDb = (String) sessionStore.get("TARGET_DB");
         QueryDTO queryDTO = tempTableRepository.get(trxId, words, fields, targetDb);
         List<Map<String, String>> query = queryDTO.query;
-        log.info("Session Id: " + trxId + " QuerySize: ", query.size() );
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query14/query14.html");

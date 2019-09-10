@@ -44,7 +44,7 @@ public class Query18Controller {
         session.setAttribute("TRX_ID", trxId);
         log.info("Session Id: " + trxId + " Starting" );
         List<Map<String, String>> query = namingDataRepository.get(trxId,  formData.get("field"), formData.get("constraints"));
-        log.info("Session Id: " + trxId + " QuerySize: ", query.size() );
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         session.setAttribute("expData1", query);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("constraints", formData.get("constraints"));
