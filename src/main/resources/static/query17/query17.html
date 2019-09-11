@@ -15,7 +15,8 @@
             var constraintsJson=localStorage.getItem('CONSTRAINTS');
             if (!constraintsJson)
                 constraintsJson='{}';
-            $('#form').append('<input type="hidden" name="constraints" value=' + constraintsJson + ' autocomplete="off" />');
+            $('#constraint-id').remove();
+            $('#form').append('<input id="constraint-id" type="hidden" name="constraints" value=' + constraintsJson + ' autocomplete="off" />');
             $('#form').submit();
             return true;
         }

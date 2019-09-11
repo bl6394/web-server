@@ -46,6 +46,7 @@ public class Query14Controller {
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
+        session.setAttribute("FORM_DATA", formData);
         log.info("Session Id: " + trxId + " Starting" );
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
@@ -84,7 +85,8 @@ public class Query14Controller {
         model.addAttribute("summary", queryDTO.summary);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
-        addButtonFlags(model);
+        MultiValueMap<String, String> formData = (MultiValueMap<String, String>) session.getAttribute("FORM_DATA");
+        addButtonFlags(formData, model);
         return "query14/query14final";
     }
 
@@ -117,7 +119,8 @@ public class Query14Controller {
         model.addAttribute("summary", queryDTO.summary);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
-        addButtonFlags(model);
+        MultiValueMap<String, String> oldFormData = (MultiValueMap<String, String>) session.getAttribute("FORM_DATA");
+        addButtonFlags(oldFormData, model);
         return "query14/query14final";
     }
 
@@ -149,12 +152,15 @@ public class Query14Controller {
         return "query14/query14doemail";
     }
 
-    private void addButtonFlags(Model model) {
-        model.addAttribute("orthoButtonFlag", Boolean.TRUE);
-        model.addAttribute("phonoButtonFlag", Boolean.TRUE);
-        model.addAttribute("phonoHButtonFlag", Boolean.TRUE);
-        model.addAttribute("ogButtonFlag", Boolean.TRUE);
-        model.addAttribute("oghButtonFlag", Boolean.TRUE);
+    private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
+        if (formData.get("field") == null) {
+            return;
+        }
+        model.addAttribute("orthoButtonFlag", formData.get("field").contains("OrthoBTN"));
+        model.addAttribute("phonoButtonFlag", formData.get("field").contains("PhonoBTN"));
+        model.addAttribute("phonoHButtonFlag", formData.get("field").contains("PhonoHBTN"));
+        model.addAttribute("ogButtonFlag", formData.get("field").contains("OGBTN"));
+        model.addAttribute("oghButtonFlag", formData.get("field").contains("OGHBTN"));
     }
 
     private List<String> parseFile(MultipartFile file) {
