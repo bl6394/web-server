@@ -61,6 +61,10 @@ public class Query14Controller {
     public String processFile(@RequestParam("file") MultipartFile file, Model model, HttpSession session) {
         String trxId = (String) session.getAttribute("TRX_ID");
         log.info("Session Id: " + trxId + " Process File" );
+        if (file.isEmpty()) {
+            model.addAttribute("errorMessage", "ERROR:  You must supply a file!");
+            return "query14/query14file";
+        }
         List<String> words = parseFile(file);
         String targetDb = (String) sessionStore.get("TARGET_DB");
         List<String> fields = (List<String>) sessionStore.get("FIELDS");

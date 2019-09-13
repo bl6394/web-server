@@ -58,6 +58,10 @@ public class Query19Controller {
                               RedirectAttributes redirectAttributes, Model model, HttpSession session) {
         String trxId = (String) session.getAttribute("TRX_ID");
         log.info("Session Id: " + trxId + " Process File" );
+        if (file.isEmpty()) {
+            model.addAttribute("errorMessage", "ERROR:  You must supply a file!");
+            return "query19/query19file";
+        }
         List<String> words = parseFile(file);
         log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
         List<String> fields = (List<String>) session.getAttribute("FIELDS");

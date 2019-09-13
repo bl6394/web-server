@@ -31,6 +31,9 @@
                     <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
                     <tr><td></td><td><input class="elpButton" type="submit" value="Upload" /></td></tr>
                 </table>
+                <span th:if="${errorMessage != null and !errorMessage.empty}">
+                    <h2><span th:text="${errorMessage}">Error Message</span></h2>
+                </span>
 
             <hr>
             <div w3-include-html="/include/footer.html"></div>
