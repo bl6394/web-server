@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
-public class Query13Controller {
+public class Query13Controller extends AbstractController{
 
     private final Logger log = LoggerFactory.getLogger(Query13Controller.class);
 
@@ -40,9 +42,7 @@ public class Query13Controller {
 
     @PostMapping(value = "/query13/query13do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = UUID.randomUUID().toString();
-        session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting" );
+        String trxId = initializeSession(log, session);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
         List<Map<String, String>> query = itemRepository.get(trxId, formData.get("field"), targetDb, formData.get("constraints"));
         log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
@@ -55,7 +55,7 @@ public class Query13Controller {
         model.addAttribute("items", query);
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete");
-        addButtonFlags(formData, model);
+        addButtonsFlags(formData, model);
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query13/query13.html");
@@ -69,7 +69,7 @@ public class Query13Controller {
 
     @PostMapping(value = "/query13/query13domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = (String) session.getAttribute("TRX_ID");
+        String trxId = getTrxId(session);
         log.info("Session Id: " + trxId + " Processing Email" );
         String emailAddress = formData.getFirst("address");
         log.info("Session Id: " + trxId + " Email: " + emailAddress );
@@ -95,26 +95,6 @@ public class Query13Controller {
         }
         log.info("Session Id: " + trxId + " Finished Query 13" );
         return "query13/query13doemail";
-    }
-
-    private List<String> convertItemsToWords(List<Map<String, String>> items) {
-        List<String> words = new ArrayList<>();
-        for (Map<String,String> item: items){
-            words.add(item.get("Word"));
-        }
-        return words;
-    }
-
-
-    private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        if (formData.get("field") == null) {
-            return;
-        }
-        model.addAttribute("orthoButtonFlag", formData.get("field").contains("OrthoBTN"));
-        model.addAttribute("phonoButtonFlag", formData.get("field").contains("PhonoBTN"));
-        model.addAttribute("phonoHButtonFlag", formData.get("field").contains("PhonoHBTN"));
-        model.addAttribute("ogButtonFlag", formData.get("field").contains("OGBTN"));
-        model.addAttribute("oghButtonFlag", formData.get("field").contains("OGHBTN"));
     }
 
 

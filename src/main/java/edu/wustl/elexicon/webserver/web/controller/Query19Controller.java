@@ -14,17 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
-public class Query19Controller {
+public class Query19Controller extends AbstractController {
 
     private final Logger log = LoggerFactory.getLogger(Query19Controller.class);
 
@@ -42,10 +40,8 @@ public class Query19Controller {
     }
 
     @PostMapping(value = "/query19/query19do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = UUID.randomUUID().toString();
-        session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting Query 18" );
+    public String process(@RequestBody MultiValueMap<String, String> formData, HttpSession session) {
+        String trxId = initializeSession(log, session);
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
         List<String> distubution = formData.get("dist");
         session.setAttribute("FIELDS", fields);
@@ -54,45 +50,32 @@ public class Query19Controller {
     }
 
     @PostMapping(value = "/query19/query19filedo")
-    public String processFile(@RequestParam("file") MultipartFile file,
-                              RedirectAttributes redirectAttributes, Model model, HttpSession session) {
-        String trxId = (String) session.getAttribute("TRX_ID");
+    public String processFile(@RequestParam("file") MultipartFile file, Model model, HttpSession session) {
+        String trxId = getTrxId(session);
         log.info("Session Id: " + trxId + " Process File" );
         if (file.isEmpty()) {
             model.addAttribute("errorMessage", "ERROR:  You must supply a file!");
             return "query19/query19file";
         }
-        List<String> words = parseFile(file);
-        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
-        List<String> fields = (List<String>) session.getAttribute("FIELDS");
-        List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
-        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
-        if (query.isEmpty()) {
-            model.addAttribute("errorMessage", "You query generated no results!");
-            model.addAttribute("errorBackLink", "/query19/query19.html");
-            return "errorback";
-        }
-        session.setAttribute("nwItems", query);
-        List<String> distubution = (List<String>) session.getAttribute("DISTRIBUTION");
-        if (query.size() > maxHtmlResultSet || distubution.contains("email") ) {
-            return "query19/emailresponse";
-        }
-        model.addAttribute("nwItems", query);
-        model.addAttribute("nwItemCount", query.size());
-        addButtonFlags(model);
-        return "query19/query19final";
+        List<String> words = parseFile(log, file);
+        return processNonWords(model, session, trxId, words);
     }
 
     @PostMapping(value = "/query19/query19listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processList(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = (String) session.getAttribute("TRX_ID");
+        String trxId = getTrxId(session);
         log.info("Session Id: " + trxId + " Process List" );
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
-        log.info("Session Id: " + trxId + " WordsSize: " + words.size() );
+
+        return processNonWords(model, session, trxId, words);
+    }
+
+    private String processNonWords(Model model, HttpSession session, String trxId, List<String> words) {
+        log.info("Session Id: " + trxId + " WordsSize: " + words.size());
         List<String> fields = (List<String>) session.getAttribute("FIELDS");
         List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
-        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
+        log.info("Session Id: " + trxId + " QuerySize: " + query.size());
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query19/query19.html");
@@ -100,7 +83,7 @@ public class Query19Controller {
         }
         session.setAttribute("nwItems", query);
         List<String> distubution = (List<String>) session.getAttribute("DISTRIBUTION");
-        if (query.size() > maxHtmlResultSet || distubution.contains("email") ) {
+        if (query.size() > maxHtmlResultSet || distubution.contains("email")) {
             return "query19/emailresponse";
         }
         model.addAttribute("nwItems", query);
@@ -111,7 +94,7 @@ public class Query19Controller {
 
     @PostMapping(value = "/query19/query19domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = (String) session.getAttribute("TRX_ID");
+        String trxId = getTrxId(session);
         log.info("Session Id: " + trxId + " Processing email" );
         String emailAddress = formData.getFirst("address");
         log.info("Session Id: " + trxId + " Email: " + emailAddress );
@@ -139,42 +122,8 @@ public class Query19Controller {
         model.addAttribute("orthoButtonFlag", Boolean.TRUE);
     }
 
-    private List<String> parseFile(MultipartFile file) {
-        List<String> words = new ArrayList<>();
-        String line;
-        try {
-            InputStream is = file.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            while ((line = br.readLine()) != null) {
-                String cleanLine = line.replaceAll("[^A-Za-z\']", " ");
-                String[] wordsInLine = cleanLine.split("\\s+");
-                for (int i = 0; i < wordsInLine.length; i++) {
-                    String cleanWord = wordsInLine[i].trim();
-                    if (!cleanWord.isEmpty()) {
-                        words.add(cleanWord);
-                    }
-                }
-            }
 
-        } catch (IOException e) {
-            log.error("error: ", e);
-        }
-        return words;
-    }
 
-    private List<String> parseString(String wordlist) {
-        List<String> words = new ArrayList<>();
-        String cleanLine = wordlist.replaceAll("[^A-Za-z\']", " ");
-        String[] wordsInLine = cleanLine.split("\\s+");
-        for (int i = 0; i < wordsInLine.length; i++) {
-            String cleanWord = wordsInLine[i].trim();
-            if (!cleanWord.isEmpty()) {
-                words.add(cleanWord);
-            }
-        }
-        return words;
-    }
 
 
 }

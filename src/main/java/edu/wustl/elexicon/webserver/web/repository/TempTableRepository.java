@@ -2,7 +2,6 @@ package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
-import edu.wustl.elexicon.webserver.web.controller.Query14Controller;
 import edu.wustl.elexicon.webserver.web.domain.QueryDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-public class Query8Controller {
+public class Query8Controller extends AbstractController{
 
     private final Logger log = LoggerFactory.getLogger(Query8Controller.class);
 
@@ -65,7 +65,7 @@ public class Query8Controller {
 
     @PostMapping(value = "/query8/query8domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = (String) session.getAttribute("TRX_ID");
+        String trxId = getTrxId(session);
         log.info("Session Id: " + trxId + " Process Email" );
         String emailAddress = formData.getFirst("address");
         log.info("Session Id: " + trxId + " Email: " + emailAddress );
@@ -88,7 +88,6 @@ public class Query8Controller {
         }
         return "query8/query8doemail";
     }
-
 
     private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
         if (formData.get("field") == null) {

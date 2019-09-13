@@ -1,6 +1,5 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
-import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
 import edu.wustl.elexicon.webserver.web.NonWordItemViewModelMapper;
 import org.springframework.jdbc.core.RowMapper;
 

@@ -18,10 +18,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
-public class Query18Controller {
+public class Query18Controller extends AbstractController{
 
     private final Logger log = LoggerFactory.getLogger(Query18Controller.class);
 
@@ -40,9 +39,7 @@ public class Query18Controller {
 
     @PostMapping(value = "/query18/query18do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = UUID.randomUUID().toString();
-        session.setAttribute("TRX_ID", trxId);
-        log.info("Session Id: " + trxId + " Starting" );
+        String trxId = initializeSession(log, session);
         int querySize = namingDataRepository.getSize(trxId,  formData.get("field"), formData.get("constraints"));
         if ( querySize >= 100000){
             model.addAttribute("errorMessage", "You query generated " + querySize + " results!  Please add constraints...");
@@ -57,7 +54,7 @@ public class Query18Controller {
         model.addAttribute("field", formData.get("field"));
         model.addAttribute("expData", query);
         model.addAttribute("expDataCount", query.size());
-        addButtonFlags(formData, model);
+        addButtonsFlags(formData, model);
         if (query.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query18/query18.html");
@@ -71,7 +68,7 @@ public class Query18Controller {
 
     @PostMapping(value = "/query18/query18domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
-        String trxId = (String) session.getAttribute("TRX_ID");
+        String trxId = getTrxId(session);
         log.info("Session Id: " + trxId + " Processing Email" );
         String emailAddress = formData.getFirst("address");
         log.info("Session Id: " + trxId + " Email: " + emailAddress );
@@ -84,8 +81,8 @@ public class Query18Controller {
         if (expData != null) {
             model.addAttribute("trxId", trxId);
             try {
-                String csv = csvWriter.writeCsv(expData);
                 Map<String, String> attachments = new HashMap<>();
+                String csv = csvWriter.writeCsv(expData);
                 attachments.put("NamingData.csv", csv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
@@ -94,19 +91,6 @@ public class Query18Controller {
         }
         return "query18/query18doemail";
     }
-
-
-    private void addButtonFlags(@RequestBody MultiValueMap<String, String> formData, Model model) {
-        if (formData.get("field") == null) {
-            return;
-        }
-        model.addAttribute("orthoButtonFlag", formData.get("field").contains("OrthoBTN"));
-        model.addAttribute("phonoButtonFlag", formData.get("field").contains("PhonoBTN"));
-        model.addAttribute("phonoHButtonFlag", formData.get("field").contains("PhonoHBTN"));
-        model.addAttribute("ogButtonFlag", formData.get("field").contains("OGBTN"));
-        model.addAttribute("oghButtonFlag", formData.get("field").contains("OGHBTN"));
-    }
-
 
 
 }
