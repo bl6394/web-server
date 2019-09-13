@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/include/styles.css">
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minEmotionalArousal ) {
+                  document.getElementById("minEmotional_ArousalInputField").value = constraints.minEmotionalArousal;
+              }
+              if (constraints.maxEmotionalArousal) {
+                  document.getElementById("maxEmotional_ArousalInputField").value = constraints.maxEmotionalArousal;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minEmotional_ArousalInputField").value) {
+              constraints.minEmotionalArousal = document.getElementById("minEmotional_ArousalInputField").value;
+          } else {
+              delete constraints.minEmotionalArousal;
+          }
+          if (document.getElementById("maxEmotional_ArousalInputField").value) {
+              constraints.maxEmotionalArousal = document.getElementById("maxEmotional_ArousalInputField").value;
+          } else {
+              delete constraints.maxEmotionalArousal;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on Emotional_Arousal</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Emotional_Arousal or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>Emotional_Arousal</TD>
+      <TD><INPUT ID="minEmotional_ArousalInputField" TYPE=TEXT NAME="minEmotional_Arousal"></TD>
+      <TD><INPUT ID="maxEmotional_ArousalInputField" TYPE=TEXT NAME="maxEmotional_Arousal">
+    </TR>
+  </table>
+  <BR>
+  <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>

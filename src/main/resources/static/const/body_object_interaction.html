@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/include/styles.css">
+  <script>
+      var constraints;
+      var CONSTRAINT_KEY = "CONSTRAINTS";
+      function init() {
+          if (typeof(Storage) !== "undefined") {
+              constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+              if (constraints == undefined){
+                  constraints = {};
+              }
+              if (constraints.minBodyObjectInteraction ) {
+                  document.getElementById("minBody_Object_InteractionInputField").value = constraints.minBodyObjectInteraction;
+              }
+              if (constraints.maxBodyObjectInteraction) {
+                  document.getElementById("maxBody_Object_InteractionInputField").value = constraints.maxBodyObjectInteraction;
+              }
+          } else {
+              document.getElementById("errorMessage").innerHTML = "Sorry, your browser does not support web storage...";
+          }
+      }
+      function save() {
+          constraints = JSON.parse(localStorage.getItem(CONSTRAINT_KEY));
+          if (constraints == undefined){
+              constraints = {};
+          }
+          if (document.getElementById("minBody_Object_InteractionInputField").value) {
+              constraints.minBodyObjectInteraction = document.getElementById("minBody_Object_InteractionInputField").value;
+          } else {
+              delete constraints.minBodyObjectInteraction;
+          }
+          if (document.getElementById("maxBody_Object_InteractionInputField").value) {
+              constraints.maxBodyObjectInteraction = document.getElementById("maxBody_Object_InteractionInputField").value;
+          } else {
+              delete constraints.maxBodyObjectInteraction;
+          }
+          localStorage.setItem(CONSTRAINT_KEY, JSON.stringify(constraints))
+          self.close();
+      }
+  </script>
+  <title>Constraints on Body_Object_Interaction</title>
+</head>
+
+<body onload="init()">
+<div id="errorMessage"></div>
+<h2>Please enter any desired contraints upon the Body_Object_Interaction or leave blank if none are desired:</h2>
+<div style="text-align: center;">
+  <table border="0">
+    <tr>
+      <th align="left">Attribute</th>
+      <th align="left">Minimum Value</th>
+      <th align="left">Maximum Value</th>
+    </tr>
+    <TR ALIGN=LEFT>
+      <TD>Body_Object_Interaction</TD>
+      <TD><INPUT ID="minBody_Object_InteractionInputField" TYPE=TEXT NAME="minBody_Object_Interaction"></TD>
+      <TD><INPUT ID="maxBody_Object_InteractionInputField" TYPE=TEXT NAME="maxBody_Object_Interaction">
+    </TR>
+  </table>
+  <BR>
+  <button class="elpButton" onclick="save()">Submit Constraint</button>
+</div>
+</body>
+</html>
