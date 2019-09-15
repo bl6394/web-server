@@ -79,12 +79,20 @@ public class Query13Controller extends AbstractController{
         model.addAttribute("trxId", trxId);
         String sql =  (String) session.getAttribute("itemsSql");
         String targetDb = (String) session.getAttribute("targetDb");
+        validation(sql, targetDb);
         query13LargeResponseProcessor.processLargeResult(trxId, emailAddress, sql, targetDb);
         log.info("Session Id: " + trxId + " Finished Query 13" );
         return "query13/query13doemail";
     }
 
-
+    public void validation(String sql, String targetDb) {
+        if (sql  == null){
+            throw new RuntimeException("sql is null");
+        }
+        if (targetDb  == null){
+            throw new RuntimeException("targetDb is null");
+        }
+    }
 
 
 }
