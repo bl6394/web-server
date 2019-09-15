@@ -44,8 +44,8 @@ public class Query8Controller extends AbstractController{
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
         log.info("Session Id: " + trxId + " Starting" );
-        String sql = nonWordSQLHelper.getSQL(trxId, formData.get("field"), formData.get("constraints"));
-        String sizeSQL = nonWordSQLHelper.getSizeSQL(trxId, formData.get("field"), formData.get("constraints"));
+        String sql = nonWordSQLHelper.getSQL(formData.get("field"), formData.get("constraints"));
+        String sizeSQL = nonWordSQLHelper.getSizeSQL(formData.get("constraints"));
         log.info("Session Id: " + trxId + " SQL: " + sql);
         int querySize = nonWordItemRepository.getSize(sizeSQL);
         if (querySize == 0) {

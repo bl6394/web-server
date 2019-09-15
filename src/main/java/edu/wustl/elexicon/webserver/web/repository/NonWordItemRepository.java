@@ -13,8 +13,6 @@ import java.util.Map;
 public class NonWordItemRepository {
     private final Logger log = LoggerFactory.getLogger(NonWordItemRepository.class);
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-
     private JdbcTemplate jdbcTemplate;
 
     public NonWordItemRepository(JdbcTemplate jdbcTemplate) {

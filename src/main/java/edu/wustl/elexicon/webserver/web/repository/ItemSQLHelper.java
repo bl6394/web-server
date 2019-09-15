@@ -19,7 +19,7 @@ public class ItemSQLHelper {
         return  "select " + createSelectList(fieldNames) +" from " + targetDb + createCriteriaExpression(criteria);
     }
 
-    public String getSizeSQL(List<String> fieldNames, String targetDb, List<String> criteria){
+    public String getSizeSQL(String targetDb, List<String> criteria){
         return  "select count(*) from " + targetDb + createCriteriaExpression(criteria);
     }
 
