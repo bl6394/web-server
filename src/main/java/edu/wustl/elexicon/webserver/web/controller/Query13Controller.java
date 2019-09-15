@@ -39,8 +39,9 @@ public class Query13Controller extends AbstractController{
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = initializeSession(log, session);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        String sql = itemSQLHelper.getSQL(trxId, formData.get("field"), targetDb, formData.get("constraints"));
-        String sizeSQL = itemSQLHelper.getSizeSQL(trxId, formData.get("field"), targetDb, formData.get("constraints"));
+        String sql = itemSQLHelper.getSQL(formData.get("field"), targetDb, formData.get("constraints"));
+        String sizeSQL = itemSQLHelper.getSizeSQL(formData.get("field"), targetDb, formData.get("constraints"));
+        log.info("Session Id: " + trxId + " SQL: " + sql);
         int querySize = itemRepository.getSize(sizeSQL);
         if (querySize == 0) {
             model.addAttribute("errorMessage", "You query generated no results!");

@@ -2,7 +2,9 @@ package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
+import edu.wustl.elexicon.webserver.service.Query8LargeResponseProcessor;
 import edu.wustl.elexicon.webserver.web.repository.NonWordItemRepository;
+import edu.wustl.elexicon.webserver.web.repository.NonWordSQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,14 +30,13 @@ public class Query8Controller extends AbstractController{
     @Value("${maxquerysize}")
     private Integer maxHtmlResultSet;
 
-    private final Mailer mailer;
-    private final CsvWriter csvWriter;
     private final NonWordItemRepository nonWordItemRepository;
+    private final NonWordSQLHelper nonWordSQLHelper = new NonWordSQLHelper();
+    private final Query8LargeResponseProcessor query8LargeResponseProcessor;
 
-    public Query8Controller(NonWordItemRepository nonWordItemRepository, Mailer mailer, CsvWriter csvWriter) {
+    public Query8Controller(NonWordItemRepository nonWordItemRepository, Query8LargeResponseProcessor query8LargeResponseProcessor) {
         this.nonWordItemRepository = nonWordItemRepository;
-        this.mailer = mailer;
-        this.csvWriter = csvWriter;
+        this.query8LargeResponseProcessor =  query8LargeResponseProcessor;
     }
 
     @PostMapping(value = "/query8/query8do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -43,7 +44,20 @@ public class Query8Controller extends AbstractController{
         String trxId = UUID.randomUUID().toString();
         session.setAttribute("TRX_ID", trxId);
         log.info("Session Id: " + trxId + " Starting" );
-        List<Map<String, String>> query = nonWordItemRepository.get(trxId, formData.get("field"), formData.get("constraints"));
+        String sql = nonWordSQLHelper.getSQL(trxId, formData.get("field"), formData.get("constraints"));
+        String sizeSQL = nonWordSQLHelper.getSizeSQL(trxId, formData.get("field"), formData.get("constraints"));
+        log.info("Session Id: " + trxId + " SQL: " + sql);
+        int querySize = nonWordItemRepository.getSize(sizeSQL);
+        if (querySize == 0) {
+            model.addAttribute("errorMessage", "You query generated no results!");
+            model.addAttribute("errorBackLink", "/query8/query8.html");
+            return "errorback";
+        }
+        if (querySize > maxHtmlResultSet || formData.get("dist").contains("email") ) {
+            session.setAttribute("nonWordSql", sql);
+            return "query8/emailresponse";
+        }
+        List<Map<String, String>> query = nonWordItemRepository.get(sql);
         log.info("Session Id: " + trxId + " QuerySize: " +  query.size() );
         session.setAttribute("nwItemData", query);
         model.addAttribute("dist", formData.get("dist"));
@@ -52,14 +66,6 @@ public class Query8Controller extends AbstractController{
         model.addAttribute("nwItem", query);
         model.addAttribute("nwItemCount", query.size());
         addButtonFlags(formData, model);
-        if (query.isEmpty()) {
-            model.addAttribute("errorMessage", "You query generated no results!");
-            model.addAttribute("errorBackLink", "/query8/query8.html");
-            return "errorback";
-        }
-        if (query.size() > maxHtmlResultSet || formData.get("dist").contains("email") ) {
-            return "query8/emailresponse";
-        }
         return "query8/query8do";
     }
 
@@ -73,19 +79,10 @@ public class Query8Controller extends AbstractController{
             model.addAttribute("errorMessage", "You must supply an email address!");
             return "query8/emailresponse";
         }
+        final String sql = (String) session.getAttribute("nonWordSql");
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("nwItemData");
-        if (expData != null) {
-            model.addAttribute("trxId", trxId);
-            try {
-                String csv = csvWriter.writeCsv(expData);
-                Map<String, String> attachments = new HashMap<>();
-                attachments.put("NonWord.csv", csv);
-                mailer.sendMessage(trxId, attachments, emailAddress);
-            } catch (IOException e) {
-                log.error("error",  e);
-            }
-        }
+        model.addAttribute("trxId", trxId);
+        query8LargeResponseProcessor.processLargeResult(trxId, emailAddress, sql);
         return "query8/query8doemail";
     }
 

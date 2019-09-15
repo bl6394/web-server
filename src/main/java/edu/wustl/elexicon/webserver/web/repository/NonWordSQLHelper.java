@@ -1,26 +1,37 @@
 package edu.wustl.elexicon.webserver.web.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.wustl.elexicon.webserver.web.ItemViewModelMapper;
+import edu.wustl.elexicon.webserver.web.NonWordItemViewModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ItemSQLHelper {
+public class NonWordSQLHelper {
 
-    private final Logger log = LoggerFactory.getLogger(ItemSQLHelper.class);
+    private final Logger log = LoggerFactory.getLogger(NonWordSQLHelper.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public String getSQL( List<String> fieldNames, String targetDb, List<String> criteria){
-        return  "select " + createSelectList(fieldNames) +" from " + targetDb + createCriteriaExpression(criteria);
+    public String getSQL(String trxId, List<String> fieldNames, List<String> criteria){
+        return  "select " + createSelectList(fieldNames) +" from nw_item " + createCriteriaExpression(criteria);
     }
 
-    public String getSizeSQL(List<String> fieldNames, String targetDb, List<String> criteria){
-        return  "select count(*) from " + targetDb + createCriteriaExpression(criteria);
+    public String getSizeSQL(String trxId, List<String> fieldNames, List<String> criteria){
+        return  "select count(*) from nw_item " + createCriteriaExpression(criteria);
+    }
+
+    List<String> createColumnHeaderList(List<String> fieldNames){
+        List<String> columnHeaders = new ArrayList<>();
+        for (NonWordItemViewModelMapper item : NonWordItemViewModelMapper.values()){
+            if (fieldNames.contains(item.getFieldName()) ){
+                columnHeaders.add(item.getFieldName());
+            }
+        }
+        return columnHeaders;
     }
 
     private String createSelectList(List<String> fieldNames){
@@ -28,7 +39,7 @@ public class ItemSQLHelper {
             return "Word";
         }
         StringBuilder columns = new StringBuilder("Word, ");
-        for (ItemViewModelMapper item : ItemViewModelMapper.values()){
+        for (NonWordItemViewModelMapper item : NonWordItemViewModelMapper.values()){
             if (fieldNames.contains(item.getFieldName()) ){
                 columns.append(item.getColumnName());
                 columns.append(", ");
@@ -44,13 +55,13 @@ public class ItemSQLHelper {
             StringBuilder whereClause = new StringBuilder(" WHERE ");
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().startsWith("min")) {
-                    ItemViewModelMapper field = ItemViewModelMapper.getByMinConstraint(entry.getKey());
+                    NonWordItemViewModelMapper field = NonWordItemViewModelMapper.getByMinConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
                         whereClause.append(" " + field.getFieldName() + " >= " + Double.parseDouble(value) + " and");
                     }
                 } else if (entry.getKey().startsWith("max")) {
-                    ItemViewModelMapper field = ItemViewModelMapper.getByMaxConstraint(entry.getKey());
+                    NonWordItemViewModelMapper field = NonWordItemViewModelMapper.getByMaxConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
                         whereClause.append(" " + field.getFieldName() + " <= " + Double.parseDouble(value) + " and");
@@ -64,6 +75,7 @@ public class ItemSQLHelper {
             return result.equals(" WHERE ") ? "" : result;
         }
         catch (Exception e){
+            log.error("error", e);
             return "";
         }
     }
@@ -77,6 +89,7 @@ public class ItemSQLHelper {
                 String json = constraints.get(0);
                 return mapper.readValue(json, HashMap.class);
             } catch (Exception e) {
+                log.error("error", e);
                 return map;
             }
         }
