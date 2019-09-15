@@ -1,6 +1,5 @@
 package edu.wustl.elexicon.webserver.service;
 
-import edu.wustl.elexicon.webserver.web.controller.Query13Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,8 @@ import java.util.Properties;
 @Service
 public class Mailer {
 
+    private static final Logger log = LoggerFactory.getLogger(Mailer.class);
+
     private final String userName;
     private final String password;
     private final String server;
@@ -33,10 +34,6 @@ public class Mailer {
         this.server = server;
         this.mailSender = getJavaMailSender();
     }
-
-    private final Logger log = LoggerFactory.getLogger(Query13Controller.class);
-
-
 
     public void sendMessage(String trxId, Map<String,String> attachments, String email){
 
@@ -55,14 +52,14 @@ public class Mailer {
             }
             mimeMessage.setContent(multipart);
         } catch (MessagingException | IOException e) {
-            e.printStackTrace();
+            log.error("error: ", e);
         }
 
         MimeMailMessage mmm = new MimeMailMessage(mimeMessage);
 
         mmm.setTo( email );
         mmm.setSubject("English Lexicon Project: Trx " + trxId);
-        mmm.setFrom("bjorn.loftis@gmail.com");
+        mmm.setFrom("elexicon.server@gmail.com");
 
         mailSender.send(mmm.getMimeMessage());
     }

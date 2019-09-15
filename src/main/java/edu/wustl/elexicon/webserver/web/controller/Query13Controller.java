@@ -1,9 +1,8 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
-import edu.wustl.elexicon.webserver.service.CsvWriter;
-import edu.wustl.elexicon.webserver.service.Mailer;
+import edu.wustl.elexicon.webserver.service.Query13LargeResponseProcessor;
 import edu.wustl.elexicon.webserver.web.repository.ItemRepository;
-import edu.wustl.elexicon.webserver.web.repository.NeighborRepository;
+import edu.wustl.elexicon.webserver.web.repository.ItemSQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,23 +25,33 @@ public class Query13Controller extends AbstractController{
     @Value("${maxquerysize}")
     private Integer maxHtmlResultSet;
 
-    private final Mailer mailer;
-    private final CsvWriter csvWriter;
     private final ItemRepository itemRepository;
-    private final NeighborRepository neighborRepository;
+    private final Query13LargeResponseProcessor query13LargeResponseProcessor;
+    private final ItemSQLHelper itemSQLHelper;
 
-    public Query13Controller(ItemRepository itemRepository, NeighborRepository neighborRepository, Mailer mailer, CsvWriter csvWriter) {
+    public Query13Controller(ItemRepository itemRepository, Query13LargeResponseProcessor query13LargeResponseProcessor) {
         this.itemRepository = itemRepository;
-        this.neighborRepository = neighborRepository;
-        this.mailer = mailer;
-        this.csvWriter = csvWriter;
+        this.query13LargeResponseProcessor = query13LargeResponseProcessor;
+        this.itemSQLHelper = new ItemSQLHelper();
     }
 
     @PostMapping(value = "/query13/query13do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = initializeSession(log, session);
         String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
-        List<Map<String, String>> query = itemRepository.get(trxId, formData.get("field"), targetDb, formData.get("constraints"));
+        String sql = itemSQLHelper.getSQL(trxId, formData.get("field"), targetDb, formData.get("constraints"));
+        String sizeSQL = itemSQLHelper.getSizeSQL(trxId, formData.get("field"), targetDb, formData.get("constraints"));
+        int querySize = itemRepository.getSize(sizeSQL);
+        if (querySize == 0) {
+            model.addAttribute("errorMessage", "You query generated no results!");
+            model.addAttribute("errorBackLink", "/query13/query13.html");
+            return "errorback";
+        }
+        if (querySize > maxHtmlResultSet || formData.get("dist").contains("email") ) {
+            session.setAttribute("itemsSql", sql);
+            return "query13/emailresponse";
+        }
+        List<Map<String, String>> query = itemRepository.get(sql);
         log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
         session.setAttribute("items", query);
         session.setAttribute("targetDb", targetDb);
@@ -56,14 +63,6 @@ public class Query13Controller extends AbstractController{
         model.addAttribute("itemCount", query.size());
         model.addAttribute("targetDb", formData.get("scope").contains("RESELP") ? "Restricted" : "Complete");
         addButtonsFlags(formData, model);
-        if (query.isEmpty()) {
-            model.addAttribute("errorMessage", "You query generated no results!");
-            model.addAttribute("errorBackLink", "/query13/query13.html");
-            return "errorback";
-        }
-        if (query.size() > maxHtmlResultSet || formData.get("dist").contains("email") ) {
-            return "query13/emailresponse";
-        }
         return "query13/query13do";
     }
 
@@ -78,24 +77,14 @@ public class Query13Controller extends AbstractController{
             return "query13/emailresponse";
         }
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("items");
-        if (items != null) {
-            model.addAttribute("trxId", trxId);
-            try {
-                Map<String, String> attachments = new HashMap<>();
-                String itemsCsv = csvWriter.writeCsv(items);
-                attachments.put("Items.csv", itemsCsv);
-                List<Map<String, String>> allNeighbors = neighborRepository.getMany(convertItemsToWords(items), "neighbors", (String) session.getAttribute("targetDb"));
-                String neighborhoodCsv = csvWriter.writeCsv(allNeighbors);
-                attachments.put("Neighborhood.csv", neighborhoodCsv);
-                mailer.sendMessage(trxId, attachments, emailAddress);
-            } catch (IOException e) {
-                log.error("error",  e);
-            }
-        }
+        model.addAttribute("trxId", trxId);
+        String sql =  (String) session.getAttribute("itemsSql");
+        String targetDb = (String) session.getAttribute("targetDb");
+        query13LargeResponseProcessor.processLargeResult(trxId, emailAddress, sql, targetDb);
         log.info("Session Id: " + trxId + " Finished Query 13" );
         return "query13/query13doemail";
     }
+
 
 
 
