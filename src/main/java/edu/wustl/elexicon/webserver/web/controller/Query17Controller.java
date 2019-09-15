@@ -44,7 +44,7 @@ public class Query17Controller extends AbstractController {
         log.info("Session Id: " + trxId + " SQL:" + sql);
         if ( querySize >= 100000){
             log.info("Session Id: " + trxId + " Result set > 100000:" + querySize);
-            model.addAttribute("errorMessage", "You query generated " + querySize + " results!  Please add constraints...");
+            model.addAttribute("errorMessage", "You query generated " + querySize + " results!  The limit for an individual query is 100,000 results.  Please add constraints...");
             model.addAttribute("errorBackLink", "/query17/query17.html");
             return "errorback";
         }
@@ -60,8 +60,6 @@ public class Query17Controller extends AbstractController {
             return "query17/emailresponse";
         }
         List<Map<String, String>> query = lexicalDataRepository.get(sql);
-        log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
-        session.setAttribute("expData", query);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));

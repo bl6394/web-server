@@ -1,8 +1,9 @@
 package edu.wustl.elexicon.webserver.web.controller;
 
-import edu.wustl.elexicon.webserver.service.CsvWriter;
-import edu.wustl.elexicon.webserver.service.Mailer;
+import edu.wustl.elexicon.webserver.service.*;
+import edu.wustl.elexicon.webserver.web.repository.LexicalDataSQLHelper;
 import edu.wustl.elexicon.webserver.web.repository.NamingDataRepository;
+import edu.wustl.elexicon.webserver.web.repository.NamingDataSQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,48 +28,52 @@ public class Query18Controller extends AbstractController{
     @Value("${maxquerysize}")
     private Integer maxHtmlResultSet;
 
-    private final Mailer mailer;
-    private final CsvWriter csvWriter;
+    private final Query18LargeResponseProcessor query18LargeResponseProcessor;
+    private final NamingDataSQLHelper namingDataSQLHelper;
     private final NamingDataRepository namingDataRepository;
 
-    public Query18Controller(NamingDataRepository namingDataRepository, Mailer mailer, CsvWriter csvWriter) {
+    public Query18Controller(NamingDataRepository namingDataRepository, Query18LargeResponseProcessor query18LargeResponseProcessor) {
         this.namingDataRepository = namingDataRepository;
-        this.mailer = mailer;
-        this.csvWriter = csvWriter;
+        this.query18LargeResponseProcessor = query18LargeResponseProcessor;
+        this.namingDataSQLHelper = new NamingDataSQLHelper();
+
     }
 
     @PostMapping(value = "/query18/query18do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = initializeSession(log, session);
-        int querySize = namingDataRepository.getSize(trxId,  formData.get("field"), formData.get("constraints"));
+        String sizeSQL = namingDataSQLHelper.getSizeSQL(formData.get("constraints"));
+        String sql = namingDataSQLHelper.getSQL(formData.get("field"), formData.get("constraints"));
+        int querySize = namingDataRepository.getSize(sizeSQL);
         if ( querySize >= 100000){
-            model.addAttribute("errorMessage", "You query generated " + querySize + " results!  Please add constraints...");
+            model.addAttribute("errorMessage", "You query generated " + querySize + " results!  The limit for an individual query is 100,000 results.  Please add constraints...");
             model.addAttribute("errorBackLink", "/query18/query18.html");
             return "errorback";
         }
-        List<Map<String, String>> query = namingDataRepository.get(trxId,  formData.get("field"), formData.get("constraints"));
+        if (querySize == 0) {
+            model.addAttribute("errorMessage", "You query generated no results!");
+            model.addAttribute("errorBackLink", "/query18/query18.html");
+            return "errorback";
+        }
+        if (querySize > maxHtmlResultSet || formData.get("dist").contains("email") ) {
+            session.setAttribute("namingDataSql", sql);
+            return "query18/emailresponse";
+        }
+        List<Map<String, String>> query = namingDataRepository.get(sql);
         log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
-        session.setAttribute("expData1", query);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("constraints", formData.get("constraints"));
         model.addAttribute("field", formData.get("field"));
         model.addAttribute("expData", query);
         model.addAttribute("expDataCount", query.size());
         addButtonsFlags(formData, model);
-        if (query.isEmpty()) {
-            model.addAttribute("errorMessage", "You query generated no results!");
-            model.addAttribute("errorBackLink", "/query18/query18.html");
-            return "errorback";
-        }
-        if (query.size() > maxHtmlResultSet || formData.get("dist").contains("email") ) {
-            return "query18/emailresponse";
-        }
         return "query18/query18do";
     }
 
     @PostMapping(value = "/query18/query18domore", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String processEmail(@RequestBody MultiValueMap<String, String> formData, Model model, HttpSession session) {
         String trxId = getTrxId(session);
+        String sql =  (String) session.getAttribute("namingDataSql");
         log.info("Session Id: " + trxId + " Processing Email" );
         String emailAddress = formData.getFirst("address");
         log.info("Session Id: " + trxId + " Email: " + emailAddress );
@@ -77,18 +82,8 @@ public class Query18Controller extends AbstractController{
             return "query18/emailresponse";
         }
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> expData = (List<Map<String, String>>) session.getAttribute("expData1");
-        if (expData != null) {
-            model.addAttribute("trxId", trxId);
-            try {
-                Map<String, String> attachments = new HashMap<>();
-                String csv = csvWriter.writeCsv(expData);
-                attachments.put("NamingData.csv", csv);
-                mailer.sendMessage(trxId, attachments, emailAddress);
-            } catch (IOException e) {
-                log.error("error: ", e);
-            }
-        }
+        model.addAttribute("trxId", trxId);
+        query18LargeResponseProcessor.processLargeResult(trxId, emailAddress, sql);
         return "query18/query18doemail";
     }
 
