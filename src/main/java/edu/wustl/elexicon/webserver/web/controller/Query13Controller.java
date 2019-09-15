@@ -49,12 +49,11 @@ public class Query13Controller extends AbstractController{
         }
         if (querySize > maxHtmlResultSet || formData.get("dist").contains("email") ) {
             session.setAttribute("itemsSql", sql);
+            session.setAttribute("targetDb", targetDb);
             return "query13/emailresponse";
         }
         List<Map<String, String>> query = itemRepository.get(sql);
         log.info("Session Id: " + trxId + " QuerySize: " + query.size() );
-        session.setAttribute("items", query);
-        session.setAttribute("targetDb", targetDb);
         model.addAttribute("dist", formData.get("dist"));
         model.addAttribute("scope", formData.get("scope"));
         model.addAttribute("constraints", formData.get("constraints"));
