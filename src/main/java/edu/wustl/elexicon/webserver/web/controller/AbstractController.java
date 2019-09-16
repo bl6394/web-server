@@ -41,16 +41,6 @@ public abstract class AbstractController {
         model.addAttribute("oghButtonFlag", formData.get("field").contains("OGHBTN"));
     }
 
-
-    protected List<String> convertItemsToWords(List<Map<String, String>> items) {
-        List<String> words = new ArrayList<>();
-        for (Map<String,String> item: items){
-            words.add(item.get("Word"));
-        }
-        return words;
-    }
-
-
     protected List<String> parseFile(Logger log, MultipartFile file) {
         List<String> words = new ArrayList<>();
         String line;

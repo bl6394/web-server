@@ -44,6 +44,7 @@ public class Query18Controller extends AbstractController{
         String trxId = initializeSession(log, session);
         String sizeSQL = namingDataSQLHelper.getSizeSQL(formData.get("constraints"));
         String sql = namingDataSQLHelper.getSQL(formData.get("field"), formData.get("constraints"));
+        log.info("Session Id: " + trxId + " SQL: " + sql);
         int querySize = namingDataRepository.getSize(sizeSQL);
         if ( querySize >= 100000){
             model.addAttribute("errorMessage", "You query generated " + querySize + " results!  The limit for an individual query is 100,000 results.  Please add constraints...");
