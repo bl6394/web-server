@@ -124,7 +124,7 @@ public class Query14Controller extends AbstractController{
                 Map<String, String> attachments = new HashMap<>();
                 String csv = csvWriter.writeCsv(items);
                 attachments.put("Items.csv", csv);
-                String summary = csvWriter.writeCsv( (List<Map<String, String>>) session.getAttribute("items"));
+                String summary = csvWriter.writeCsv( (List<Map<String, String>>) session.getAttribute("summary"));
                 attachments.put("Summary.csv", summary);
                 mailer.sendMessage(trxId, attachments, emailAddress);
             } catch (IOException e) {
