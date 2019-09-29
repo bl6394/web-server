@@ -100,6 +100,7 @@ public class Query19Controller extends AbstractController {
         log.info("Session Id: " + trxId + " QuerySize: " + queryDTO.query.size());
         model.addAttribute("nwItems", queryDTO.query);
         model.addAttribute("nwItemCount", queryDTO.query.size());
+        model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         Boolean neibtn = (Boolean) session.getAttribute("NEIBTN");
         addButtonFlags(model, neibtn);
         return "query19/query19final";
