@@ -24,21 +24,16 @@ public class ArbitraryTableRepository {
     @Transactional
     public QueryDTO get(String trxId, List<String> words, String sql, String targetDb){
         jdbcTemplate.execute("drop temporary table if exists bjorntable;");
-        jdbcTemplate.execute("drop table if exists arb_nw_item;");
-        jdbcTemplate.execute("drop table if exists arb_nw_ortho_n;");
+        jdbcTemplate.execute("drop temporary table if exists arb_nw_item;");
+        jdbcTemplate.execute("drop temporary table if exists arb_nw_ortho_n;");
         jdbcTemplate.execute("create temporary table bjorntable (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
-        jdbcTemplate.execute("create  table arb_nw_item (word VARCHAR(50) NOT NULL, " +
+        jdbcTemplate.execute("create temporary table arb_nw_item (word VARCHAR(50) NOT NULL, " +
                 "length tinyint DEFAULT NULL, ortho_n int(11) DEFAULT NULL, bg_sum int(11) DEFAULT NULL, " +
                 "bg_mean float DEFAULT NULL, bg_freq_by_pos int(11) DEFAULT NULL );");
-        jdbcTemplate.execute("create  table arb_nw_ortho_n (word VARCHAR(50) DEFAULT NULL, " +
+        jdbcTemplate.execute("create temporary table arb_nw_ortho_n (word VARCHAR(50) DEFAULT NULL, " +
                 "ortho_word VARCHAR(50) DEFAULT NULL );");
         for(String word: words){
             jdbcTemplate.update("insert into bjorntable values (?) ON DUPLICATE KEY UPDATE tempword = tempword;", word);
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         jdbcTemplate.execute("insert into arb_nw_item (word) SELECT tempword FROM bjorntable;");
         if ( "item".equalsIgnoreCase(targetDb)){
