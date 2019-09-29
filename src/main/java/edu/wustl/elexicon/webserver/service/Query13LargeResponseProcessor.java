@@ -30,7 +30,7 @@ public class Query13LargeResponseProcessor {
         this.csvWriter = csvWriter;
     }
 
-        @Async("threadPoolTaskExecutor")
+    @Async("threadPoolTaskExecutor")
     public void processLargeResult(String trxId, String emailAddress, String sql, String targetDb) {
         final List<Map<String, String>> items = itemRepository.get(sql);
         if (items != null) {

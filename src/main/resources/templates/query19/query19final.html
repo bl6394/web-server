@@ -22,13 +22,13 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-            <h4>Your query of the NonWord Lexicon returned  <span th:text="${nwItemCount}">0</span> Items:</h4>
+            <h4>Your query of the Arbitrary NonWords returned  <span th:text="${nwItemCount}">0</span> Items:</h4>
             <table border="1">
                      <tr align="CENTER">
                         <span th:each="headers : ${nwItems.get(0)}">
                             <th th:text="${headers.key}">header key</th>
                         </span>
-                         <span th:if="${orthoButtonFlag}">
+                         <span th:if="${neiButtonFlag}">
                              <th>Button</th>
                          </span>
                     </tr>
@@ -37,8 +37,8 @@
                         <span th:each="entry : ${row}">
                             <td th:text="${entry.value}">header value</td>
                         </span>
-                        <span th:if="${orthoButtonFlag} == true">
-                            <TD><INPUT type="button" class="elpButton" name="dummy" value="Ortho N..." th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=neighbors&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
+                        <span th:if="${neiButtonFlag} == true">
+                            <TD><INPUT type="button" class="elpButton" name="dummy" value="Neighborhood" th:onclick="|window.open('/neighbors?word=${row.get('Word')}&type=neighbors&target=${targetDb}','dummy','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=300,height=600')|"></TD>
                         </span>
                     </tr>
                 </span>

@@ -8,5 +8,6 @@ public class QueryDTO {
     public List<Map<String, String>> query;
     public List<Map<String, String>> summary;
     public List<Map<String, String>> notFound;
+    public List<Map<String, String>> neighborhood;
 
 }

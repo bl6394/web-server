@@ -2,7 +2,10 @@ package edu.wustl.elexicon.webserver.web.controller;
 
 import edu.wustl.elexicon.webserver.service.CsvWriter;
 import edu.wustl.elexicon.webserver.service.Mailer;
-import edu.wustl.elexicon.webserver.web.repository.TempNonWordTableRepository;
+import edu.wustl.elexicon.webserver.service.Query19LargeResponseProcessor;
+import edu.wustl.elexicon.webserver.web.domain.QueryDTO;
+import edu.wustl.elexicon.webserver.web.repository.ArbitrarySQLHelper;
+import edu.wustl.elexicon.webserver.web.repository.ArbitraryTableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,24 +30,31 @@ public class Query19Controller extends AbstractController {
 
     @Value("${maxquerysize}")
     private Integer maxHtmlResultSet;
-
-    private TempNonWordTableRepository tempNonWordTableRepository;
+    private final Query19LargeResponseProcessor query19LargeResponseProcessor;
+    private final ArbitrarySQLHelper arbitrarySQLHelper;
+    private final ArbitraryTableRepository arbitraryTableRepository;
     private final Mailer mailer;
     private final CsvWriter csvWriter;
 
-    public Query19Controller(TempNonWordTableRepository tempNonWordTableRepository, Mailer mailer, CsvWriter csvWriter) {
-        this.tempNonWordTableRepository = tempNonWordTableRepository;
+    public Query19Controller(Query19LargeResponseProcessor query19LargeResponseProcessor, ArbitraryTableRepository arbitraryTableRepository, Mailer mailer, CsvWriter csvWriter) {
+        this.arbitraryTableRepository = arbitraryTableRepository;
+        this.query19LargeResponseProcessor = query19LargeResponseProcessor;
         this.csvWriter = csvWriter;
         this.mailer = mailer;
+        this.arbitrarySQLHelper = new ArbitrarySQLHelper();
     }
 
     @PostMapping(value = "/query19/query19do", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String process(@RequestBody MultiValueMap<String, String> formData, HttpSession session) {
-        String trxId = initializeSession(log, session);
+        initializeSession(log, session);
         List<String> fields = formData.get("field") == null ? new ArrayList<>() : formData.get("field");
         List<String> distubution = formData.get("dist");
+        String targetDb = formData.get("scope").contains("RESELP") ? "item" : "itemplus";
+        Boolean neiBtn = formData.get("field").contains("NEIBTN");
         session.setAttribute("FIELDS", fields);
         session.setAttribute("DISTRIBUTION", distubution);
+        session.setAttribute("NEIBTN", neiBtn);
+        session.setAttribute("TARGET_DB", targetDb);
         return formData.get("list").contains("tlist") ? "query19/query19list" : "query19/query19file";
     }
 
@@ -59,7 +67,7 @@ public class Query19Controller extends AbstractController {
             return "query19/query19file";
         }
         List<String> words = parseFile(log, file);
-        return processNonWords(model, session, trxId, words);
+        return processArbitraryNonWords(model, session, trxId, words);
     }
 
     @PostMapping(value = "/query19/query19listdo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -68,28 +76,32 @@ public class Query19Controller extends AbstractController {
         log.info("Session Id: " + trxId + " Process List" );
         String wordlist = formData.get("wordlist").get(0);
         List<String> words = parseString(wordlist);
-
-        return processNonWords(model, session, trxId, words);
+        return processArbitraryNonWords(model, session, trxId, words);
     }
 
-    private String processNonWords(Model model, HttpSession session, String trxId, List<String> words) {
+    private String processArbitraryNonWords(Model model, HttpSession session, String trxId, List<String> words) {
         log.info("Session Id: " + trxId + " WordsSize: " + words.size());
         List<String> fields = (List<String>) session.getAttribute("FIELDS");
-        List<Map<String, String>> query = tempNonWordTableRepository.get(trxId, words, fields);
-        log.info("Session Id: " + trxId + " QuerySize: " + query.size());
-        if (query.isEmpty()) {
+        List<String> distubution = (List<String>) session.getAttribute("DISTRIBUTION");
+        String targetDb = (String) session.getAttribute("TARGET_DB");
+        String sql = arbitrarySQLHelper.getSQL(fields);
+        session.setAttribute("SQL", sql);
+        session.setAttribute("WORDS", words);
+        if (words.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
             model.addAttribute("errorBackLink", "/query19/query19.html");
             return "errorback";
         }
-        session.setAttribute("nwItems", query);
-        List<String> distubution = (List<String>) session.getAttribute("DISTRIBUTION");
-        if (query.size() > maxHtmlResultSet || distubution.contains("email")) {
+        if (words.size() > 200 || distubution.contains("email")) {
             return "query19/emailresponse";
         }
-        model.addAttribute("nwItems", query);
-        model.addAttribute("nwItemCount", query.size());
-        addButtonFlags(model);
+
+        QueryDTO queryDTO = arbitraryTableRepository.get(trxId, words, sql,  targetDb);
+        log.info("Session Id: " + trxId + " QuerySize: " + queryDTO.query.size());
+        model.addAttribute("nwItems", queryDTO.query);
+        model.addAttribute("nwItemCount", queryDTO.query.size());
+        Boolean neibtn = (Boolean) session.getAttribute("NEIBTN");
+        addButtonFlags(model, neibtn);
         return "query19/query19final";
     }
 
@@ -104,25 +116,17 @@ public class Query19Controller extends AbstractController {
             return "query19/emailresponse";
         }
         model.addAttribute("emailAddress", emailAddress);
-        final List<Map<String, String>> items = (List<Map<String, String>>) session.getAttribute("nwItems");
-        if (items != null) {
-            model.addAttribute("trxId", trxId);
-            try {
-                String csv = csvWriter.writeCsv(items);
-                Map<String, String> attachments = new HashMap<>();
-                attachments.put("NonWord.csv", csv);
-                mailer.sendMessage(trxId, attachments, emailAddress);
-            } catch (IOException e) {
-                log.error("error: ", e);
-            }
-        }
+        model.addAttribute("trxId", trxId);
+        String targetDb = (String) session.getAttribute("TARGET_DB");
+        List<String> words = (List<String>) session.getAttribute("WORDS");
+        String sql = (String) session.getAttribute("SQL");
+        query19LargeResponseProcessor.processLargeResult(trxId, emailAddress, words, sql, targetDb);
         return "query19/query19doemail";
     }
 
-    private void addButtonFlags(Model model) {
-        model.addAttribute("orthoButtonFlag", Boolean.TRUE);
+    private void addButtonFlags(Model model, Boolean value ) {
+        model.addAttribute("neiButtonFlag", value);
     }
-
 
 
 
