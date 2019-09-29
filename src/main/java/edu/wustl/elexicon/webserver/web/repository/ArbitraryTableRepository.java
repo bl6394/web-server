@@ -35,6 +35,11 @@ public class ArbitraryTableRepository {
         for(String word: words){
             jdbcTemplate.update("insert into bjorntable values (?) ON DUPLICATE KEY UPDATE tempword = tempword;", word);
         }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         jdbcTemplate.execute("insert into arb_nw_item (word) SELECT tempword FROM bjorntable;");
         if ( "item".equalsIgnoreCase(targetDb)){
             jdbcTemplate.execute("CALL gen_arb_bigram('bigram');");
