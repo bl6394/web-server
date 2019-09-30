@@ -28,8 +28,8 @@ public class Query19LargeResponseProcessor {
     }
 
     @Async("threadPoolTaskExecutor")
-    public void processLargeResult(String trxId, String emailAddress, List<String> words, String sql, String targetDb) {
-        final QueryDTO queryDTO = arbitraryTableRepository.get(trxId, words , sql, targetDb);
+    public void processLargeResult(String trxId, String emailAddress, List<String> words, String sql, String summarySql, String targetDb) {
+        final QueryDTO queryDTO = arbitraryTableRepository.get(trxId, words , sql, summarySql, targetDb);
         if (queryDTO.query != null) {
             try {
                 Map<String, String> attachments = new HashMap<>();
@@ -37,6 +37,8 @@ public class Query19LargeResponseProcessor {
                 attachments.put("ArbitraryNonWords.csv", itemsCsv);
                 String neighborhoodCsv = csvWriter.writeCsv(queryDTO.neighborhood);
                 attachments.put("Neighborhood.csv", neighborhoodCsv);
+                String summaryCsv = csvWriter.writeCsv(queryDTO.summary);
+                attachments.put("Summary.csv", summaryCsv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
                 log.info("Session Id: " + trxId + " Finished  Large Response for Query 19" );
             } catch (IOException e) {

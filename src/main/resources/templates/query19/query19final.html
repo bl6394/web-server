@@ -22,7 +22,30 @@
             <div w3-include-html="/include/iconbar.html"></div>
         </td>
         <td valign="top" width="100%" bgcolor="#FFFFFF">
-            <h4>Your query of the Arbitrary NonWords returned  <span th:text="${nwItemCount}">0</span> Items:</h4>
+
+            <span th:if="${summary != null and !summary.empty}">
+                <h3>Submitted List Summary Characteristics:</h3>
+
+                <p>Your query of the <span th:text="${targetDb}">Unknown</span> Lexicon with a submission containing <span th:text="${submissionCount}">0</span> arbitrary words of which  <span th:text="${nwItemCount}">0</span> are distinct.</p>
+
+                 <table border="1">
+                <tr align="CENTER">
+                        <span th:each="headers : ${summary.get(0)}">
+                            <th th:text="${headers.key}">headers key</th>
+                        </span>
+                </tr>
+                <span th:each="row : ${summary}">
+                    <tr align="CENTER">
+                        <span th:each="entry : ${row}">
+                            <td th:text="${entry.value}">header value</td>
+                        </span>
+                    </tr>
+                </span>
+                 </table>
+            </span>
+
+            <h3>Your query of the Arbitrary NonWords returned  <span th:text="${nwItemCount}">0</span> Items:</h3>
+
             <table border="1">
                      <tr align="CENTER">
                         <span th:each="headers : ${nwItems.get(0)}">

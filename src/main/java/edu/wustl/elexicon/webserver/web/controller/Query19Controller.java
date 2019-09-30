@@ -85,7 +85,9 @@ public class Query19Controller extends AbstractController {
         List<String> distubution = (List<String>) session.getAttribute("DISTRIBUTION");
         String targetDb = (String) session.getAttribute("TARGET_DB");
         String sql = arbitrarySQLHelper.getSQL(fields);
+        String summarySql = arbitrarySQLHelper.getSummarySQL(fields);
         session.setAttribute("SQL", sql);
+        session.setAttribute("SUMMARY_SQL", summarySql);
         session.setAttribute("WORDS", words);
         if (words.isEmpty()) {
             model.addAttribute("errorMessage", "You query generated no results!");
@@ -95,11 +97,12 @@ public class Query19Controller extends AbstractController {
         if (words.size() > 200 || distubution.contains("email")) {
             return "query19/emailresponse";
         }
-
-        QueryDTO queryDTO = arbitraryTableRepository.get(trxId, words, sql,  targetDb);
+        QueryDTO queryDTO = arbitraryTableRepository.get(trxId, words, sql, summarySql,  targetDb);
         log.info("Session Id: " + trxId + " QuerySize: " + queryDTO.query.size());
         model.addAttribute("nwItems", queryDTO.query);
         model.addAttribute("nwItemCount", queryDTO.query.size());
+        model.addAttribute("submissionCount", words.size());
+        model.addAttribute("summary", queryDTO.summary);
         model.addAttribute("targetDb", targetDb.equals("item") ? "Restricted" : "Complete");
         Boolean neibtn = (Boolean) session.getAttribute("NEIBTN");
         addButtonFlags(model, neibtn);
@@ -121,7 +124,8 @@ public class Query19Controller extends AbstractController {
         String targetDb = (String) session.getAttribute("TARGET_DB");
         List<String> words = (List<String>) session.getAttribute("WORDS");
         String sql = (String) session.getAttribute("SQL");
-        query19LargeResponseProcessor.processLargeResult(trxId, emailAddress, words, sql, targetDb);
+        String summarySql = (String) session.getAttribute("SUMMARY_SQL");
+        query19LargeResponseProcessor.processLargeResult(trxId, emailAddress, words, sql, summarySql, targetDb);
         return "query19/query19doemail";
     }
 

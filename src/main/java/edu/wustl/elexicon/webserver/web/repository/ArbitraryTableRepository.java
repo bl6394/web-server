@@ -22,8 +22,8 @@ public class ArbitraryTableRepository {
     }
 
     @Transactional
-    public QueryDTO get(String trxId, List<String> words, String sql, String targetDb){
-        jdbcTemplate.execute("drop temporary table if exists bjorntable;");
+    public QueryDTO get(String trxId, List<String> words, String sql, String summarySql, String targetDb){
+        jdbcTemplate.execute("drop temporary  table if exists bjorntable;");
         jdbcTemplate.execute("drop temporary table if exists arb_nw_item;");
         jdbcTemplate.execute("drop temporary table if exists arb_nw_ortho_n;");
         jdbcTemplate.execute("create temporary table bjorntable (tempword VARCHAR(50) NOT NULL, PRIMARY KEY (tempword));");
@@ -43,6 +43,7 @@ public class ArbitraryTableRepository {
         }
         QueryDTO queryDTO = new QueryDTO();
         queryDTO.query = jdbcTemplate.query(sql, new ArbitraryRowMapper());
+        queryDTO.summary = jdbcTemplate.query(summarySql, new SummaryRowMapper() );
         queryDTO.neighborhood = jdbcTemplate.query( "Select *  from arb_nw_ortho_n", new NeighborhoodRowMapper() );
         return queryDTO;
     }

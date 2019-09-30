@@ -2,6 +2,7 @@ package edu.wustl.elexicon.webserver.web;
 
 public enum SummaryModelMapper {
 
+    DISTINCT_COUNT ("Distinct_Count", "Distinct_Count", null, null),
     LENGTH ("mean_length", "Mean_Length", "minLength", "maxLength"),
     FREQ_KF ("mean_freq_kf", "Mean_Freq_KF", "minFreqKF", "maxFreqKF"),
     FREQ_HAL ("mean_freq_hal", "Mean_Freq_HAL", "minFreqHal", "maxFreqHal"),
