@@ -39,8 +39,10 @@ public class Query13LargeResponseProcessor {
                 String itemsCsv = csvWriter.writeCsv(items);
                 attachments.put("Items.csv", itemsCsv);
                 List<Map<String, String>> allNeighbors = neighborRepository.getMany(convertItemsToWords(items), "neighbors", targetDb  );
-                String neighborhoodCsv = csvWriter.writeCsv(allNeighbors);
-                attachments.put("Neighborhood.csv", neighborhoodCsv);
+                if (!allNeighbors.isEmpty()){
+                    String neighborhoodCsv = csvWriter.writeCsv(allNeighbors);
+                    attachments.put("Neighborhood.csv", neighborhoodCsv);
+                }
                 mailer.sendMessage(trxId, attachments, emailAddress);
                 log.info("Session Id: " + trxId + " Finished  Large Response for Query 13" );
             } catch (IOException e) {
