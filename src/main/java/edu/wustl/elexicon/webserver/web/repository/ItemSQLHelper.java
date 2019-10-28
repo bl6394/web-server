@@ -47,13 +47,13 @@ public class ItemSQLHelper {
                     ItemViewModelMapper field = ItemViewModelMapper.getByMinConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
-                        whereClause.append(" " + field.getFieldName() + " >= " + Double.parseDouble(value) + " and");
+                        whereClause.append(" " + field.getColumnName() + " >= " + Double.parseDouble(value) + " and");
                     }
                 } else if (entry.getKey().startsWith("max")) {
                     ItemViewModelMapper field = ItemViewModelMapper.getByMaxConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
-                        whereClause.append(" " + field.getFieldName() + " <= " + Double.parseDouble(value) + " and");
+                        whereClause.append(" " + field.getColumnName() + " <= " + Double.parseDouble(value) + " and");
                     }
                 } else {
                     ;  // skip bad data

@@ -48,13 +48,13 @@ public class NamingDataSQLHelper {
                     NamingDataViewModelMapper field = NamingDataViewModelMapper.getByMinConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
-                        whereClause.append(" " + field.getFieldName() + " >= " + Double.parseDouble(value) + " and");
+                        whereClause.append(" " + field.getColumnName() + " >= " + Double.parseDouble(value) + " and");
                     }
                 } else if (entry.getKey().startsWith("max")) {
                     NamingDataViewModelMapper field = NamingDataViewModelMapper.getByMaxConstraint(entry.getKey());
                     String value = entry.getValue();
                     if ((field != null) && (value != null)) {
-                        whereClause.append(" " + field.getFieldName() + " <= " + Double.parseDouble(value) + " and");
+                        whereClause.append(" " + field.getColumnName() + " <= " + Double.parseDouble(value) + " and");
                     }
                 } else {
                     ;  // skip bad data
