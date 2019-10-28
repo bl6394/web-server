@@ -35,8 +35,10 @@ public class Query19LargeResponseProcessor {
                 Map<String, String> attachments = new HashMap<>();
                 String itemsCsv = csvWriter.writeCsv(queryDTO.query);
                 attachments.put("ArbitraryNonWords.csv", itemsCsv);
-                String neighborhoodCsv = csvWriter.writeCsv(queryDTO.neighborhood);
-                attachments.put("Neighborhood.csv", neighborhoodCsv);
+                if (!queryDTO.neighborhood.isEmpty()){
+                    String neighborhoodCsv = csvWriter.writeCsv(queryDTO.neighborhood);
+                    attachments.put("Neighborhood.csv", neighborhoodCsv);
+                }
                 String summaryCsv = csvWriter.writeCsv(queryDTO.summary);
                 attachments.put("Summary.csv", summaryCsv);
                 mailer.sendMessage(trxId, attachments, emailAddress);
